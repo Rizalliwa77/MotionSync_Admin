@@ -1,0 +1,278 @@
+/* Importing Google font - Poppins */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: #f2efeb;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 85px;
+    display: flex;
+    overflow-x: hidden;
+    flex-direction: column;
+    background: #b4cccb;
+    padding: 25px 20px;
+    transition: width 0.4s ease;
+    --hovered-width: 260px;
+}
+
+.sidebar:hover {
+    width: var(--hovered-width);
+}
+
+.sidebar .sidebar-header {
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .sidebar-header img {
+    width: 42px;
+    border-radius: 50%; 
+}
+
+.sidebar .sidebar-header h2 {
+    color: #000;
+    font-size: 1.25rem;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-left: 23px;
+}
+
+.sidebar-links {
+    list-style: none;
+    margin-top: 20px;
+    height: 80%;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.sidebar-links::-webkit-scrollbar {
+    display: none;
+}
+
+.sidebar-links li a {
+    display: flex;
+    align-items: center;
+    gap: 0 20px;
+    color: #000;
+    font-weight: 500;
+    white-space: nowrap;
+    padding: 15px 10px;
+    text-decoration: none;
+    transition: 0.2s ease;
+    position: relative; /* Add this for dropdown positioning */
+}
+
+.sidebar-links li a:hover {
+    color: #fff;
+    background: #0c8e6b; 
+    border-radius: 4px;
+}
+
+.user-account {
+    margin-top: auto;
+    padding: 12px 10px;
+    margin-left: -10px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    color: #000;
+}
+
+.user-profile img {
+    width: 42px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+}
+
+.user-profile h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.user-profile span {
+    font-size: 0.775rem;
+    font-weight: 600;
+}
+
+.user-detail {
+    margin-left: 23px;
+    white-space: nowrap;
+}
+
+.sidebar:hover .user-account {
+    background: #0c8e6b;
+    border-radius: 4px;
+}
+
+.sidebar-links li a:hover .material-symbols-outlined {
+    color: #fff; 
+}
+
+.sidebar-links .sidebar-section {
+    margin: 15px 0;
+    text-align: center; /* Center the text */
+}
+
+.sidebar-links .sidebar-section.divider {
+    border-top: 1px solid #000; /* Change divider color to black */
+    height: 1px;
+    margin: 15px 0;
+}
+
+.sidebar-links .sidebar-section h4 {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #000; /* Change text color to black */
+    margin-bottom: 5px;
+}
+
+.sidebar-links .sidebar-section h4 span {
+    display: inline-block;
+    padding: 0 10px;
+    background-color: #b4cccb; /* Match the sidebar background color */
+    position: relative;
+    z-index: 1;
+}
+
+.sidebar-links .sidebar-section .menu-separator {
+    height: 1px;
+    background-color: #000; /* Change separator color to black */
+    position: relative;
+    top: -10px;
+    z-index: 0;
+}
+
+.sidebar:not(.hovered) .sidebar-links .sidebar-section:not(.divider) {
+    display: none;
+}
+
+/* Dropdown styles */
+.dropdown-menu {
+    list-style: none;
+    padding-left: 20px;
+    margin-top: 5px;
+    display: none; /* Hide by default */
+}
+
+.sidebar.hovered .dropdown-menu {
+    display: block; /* Show when sidebar is hovered */
+}
+
+.dropdown-menu li a {
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-menu li a:hover {
+    background-color: rgba(12, 142, 107, 0.2);
+}
+
+.sidebar.hovered .dropdown-menu li a:hover {
+    background-color: rgba(12, 142, 107, 0.4);
+}
+
+/* Adjust the dropdown arrow position */
+.dropdown-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none; /* Hide by default */
+}
+
+.sidebar.hovered .dropdown-arrow {
+    display: inline-block; /* Show when sidebar is hovered */
+}
+
+/* Style for the sign language icon */
+.material-symbols-outlined {
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+/* Logout confirmation modal styles */
+.logout-confirmation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.logout-confirmation-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.logout-confirmation-content h2 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.logout-confirmation-content p {
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.logout-confirmation-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.logout-confirmation-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.logout-confirmation-buttons .confirm-btn {
+  background-color: #0c8e6b;
+  color: #fff;
+}
+
+.logout-confirmation-buttons .confirm-btn:hover {
+  background-color: #0a7d5c;
+}
+
+.logout-confirmation-buttons .cancel-btn {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.logout-confirmation-buttons .cancel-btn:hover {
+  background-color: #e0e0e0;
+}
