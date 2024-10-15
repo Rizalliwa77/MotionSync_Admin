@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../../assets/MainMenu/Dashboard.css';
+import '../../assets/MainMenu/Dashboard.css'; 
 import Sidebar from '../Sidebar';
 
 const Dashboard = () => {
@@ -62,8 +62,8 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Translation Services */}
-          <div className="card translation-card">
+          {/* Translation Services Card */}
+          <div className="translation-card">
             <div className="card-header">
               <h2>Translation Services</h2>
               <span className="arrow">→</span>

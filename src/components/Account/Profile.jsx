@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import '../../assets/Account/Profile.css';
 import Sidebar from '../Sidebar';
-import profileImage from '/media/profile.jpg'; // Update this path if necessary
+import profile from '../../assets/media/profilepic.jpg';
+
 
 const Profile = () => {
-    const [profilePic, setProfilePic] = useState(profileImage);
+    const [profilePic, setProfilePic] = useState(profile);
     const [isSidebarHovered, setIsSidebarHovered] = useState(false);
   
     const profileData = {
@@ -66,6 +67,8 @@ const Profile = () => {
         <main className={`main-content ${isSidebarHovered ? 'sidebar-hovered' : ''}`}>
           <div className="profile-container">
             <h1 className="page-title">Profile</h1>
+            <div className="navigation-links">
+            </div>
             <div className="profile-content">
               <div className="profile-card profile-header-card">
                 <div className="profile-header">

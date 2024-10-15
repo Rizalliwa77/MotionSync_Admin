@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../../assets/MainMenu/Hub.css';
+import '../../assets/MainMenu/Hubs.css';
 import Sidebar from '../Sidebar';
 
 function Hubs() {

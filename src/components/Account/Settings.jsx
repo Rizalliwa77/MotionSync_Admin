@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../../assets/Account/Settings.css';
 import Sidebar from '../Sidebar';
-
+import { Link } from 'react-router-dom';
 const Settings = () => {
   const [isSidebarHovered, setIsSidebarHovered] = useState(false);
   const [showAdminPassword, setShowAdminPassword] = useState(false);
@@ -53,6 +53,8 @@ const Settings = () => {
       <main className={`main-content ${isSidebarHovered ? 'sidebar-hovered' : ''}`}>
         <div className={`settings-container ${isSidebarHovered ? 'sidebar-hovered' : ''}`}>
           <h1 className="page-title">Settings</h1>
+          <div className="navigation-links">
+          </div>
           <div className="settings-content">
             <div className="settings-group">
               <h2>Main Menu</h2>

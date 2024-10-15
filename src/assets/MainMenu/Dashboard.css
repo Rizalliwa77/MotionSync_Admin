@@ -32,7 +32,7 @@ body {
 }
 
 .main-content.sidebar-hovered {
-    margin-left: 260px;
+    margin-left: 10px;
 }
 
 .overview-section {
@@ -56,8 +56,8 @@ body {
 }
 
 .card {
-    background: #fff;
-    border-radius: 12px;
+    background: #ffffff; /* Background color for other cards */
+    border-radius: 12px; /* Consistent border radius */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     padding: 15px;
     display: flex;
@@ -67,8 +67,8 @@ body {
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px); /* Lift effect on hover */
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15); /* Shadow effect on hover */
 }
 
 .card-header {
@@ -112,14 +112,23 @@ body {
 }
 
 .translation-card {
-    background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+    background: linear-gradient(135deg, #34d399 0%, #059669 100%); /* Green gradient */
     color: white;
+    border-radius: 12px; /* Match the border radius of other cards */
+    padding: 15px; /* Ensure padding is consistent */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover */
+}
+
+.translation-card:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15); /* Match hover shadow effect */
 }
 
 .translation-card .card-header h2,
 .translation-card .card-content h3,
 .translation-card .card-content p {
-    color: white;
+    color: white; /* Ensure text is white for visibility */
 }
 
 .translation-buttons {

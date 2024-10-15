@@ -51,6 +51,12 @@ function User() {
   const handleSearch = () => {
     console.log(`Searching for: ${searchTerm}`);
     // Implement search functionality here
+    const filteredUsers = users.filter(user => 
+      user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setUsers(filteredUsers);
   };
 
   const handleAddUser = () => {
@@ -91,6 +97,9 @@ function User() {
       <main className={`main-content ${isSidebarHovered ? 'sidebar-hovered' : ''}`}>
         <div className="overview-section">
           <h1>User Management</h1>
+          <div className="navigation-links">
+            {/* Add navigation links if needed */}
+          </div>
         </div>
 
         <div className="cards-container">

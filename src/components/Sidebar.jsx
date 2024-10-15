@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../assets/Sidebar.css';
-import logo from '../../public/media/eyelogo.png';
-import profileImg from '../../public/media/profile.jpg';
+import logo from '../assets/media/logo.png';
+import profile from '../assets/media/profilepic.jpg';
 
 const Sidebar = ({ onHoverChange }) => {
   const navigate = useNavigate();
@@ -108,7 +108,7 @@ const Sidebar = ({ onHoverChange }) => {
         </ul>
         <div className="user-account">
           <div className="user-profile">
-            <img src={profileImg} alt="Profile Image" />
+            <img src={profile} alt="Profile Image" />
             <div className="user-detail">
               <h3>Joven my love</h3>
               <span>Super Admin</span>
