@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './assets/Login.css';
+import '../styles/Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -11,7 +11,7 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     if (email === 'Admin' && password === 'Admin123') {
-      navigate('/dashboard');
+      navigate('/dashboard'); // Navigate to the dashboard on successful login
     } else {
       setError('Invalid credentials. Please try again.');
     }
