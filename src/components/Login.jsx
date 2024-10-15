@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { db } from '../firebase/firebaseConfig'; // Import Firestore
+import { collection, getDocs } from 'firebase/firestore'; // Import Firestore functions
 import '../styles/Login.css';
 
 const Login = () => {
@@ -8,9 +10,21 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (email === 'Admin' && password === 'Admin123') {
+    const adminCollection = collection(db, 'superAdmin'); // Reference to the admin collection
+    const adminDocs = await getDocs(adminCollection); // Fetch documents from the collection
+
+    let validCredentials = false;
+
+    adminDocs.forEach((doc) => {
+      const data = doc.data();
+      if (data.username === email && data.password === password) {
+        validCredentials = true; // Check for valid credentials
+      }
+    });
+
+    if (validCredentials) {
       navigate('/dashboard'); // Navigate to the dashboard on successful login
     } else {
       setError('Invalid credentials. Please try again.');
