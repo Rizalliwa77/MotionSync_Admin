@@ -1,10 +1,13 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import '../styles/Landing.css';
 
 const Landing = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
+
   const handleLogin = () => {
     // Navigate to login page
-    window.location.href = '/login'; // Redirect to login page
+    navigate('/login'); // Use navigate instead of window.location.href
   };
 
   return (
