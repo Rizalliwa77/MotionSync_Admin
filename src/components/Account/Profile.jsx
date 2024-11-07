@@ -10,7 +10,7 @@ const Profile = () => {
   
     const profileData = {
       firstName: 'Joven',
-      lastName: 'MyLove',
+      lastName: 'De los Santos',
       role: 'Super Admin',
       email: 'joven.mylove@example.com',
       phone: '+1 (555) 123-4567',

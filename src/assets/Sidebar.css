@@ -78,7 +78,7 @@ body {
 
 .sidebar-links li a:hover {
     color: #fff;
-    background: #0c8e6b; 
+    background: #245b2c; 
     border-radius: 4px;
 }
 
@@ -208,6 +208,12 @@ body {
     'wght' 400,
     'GRAD' 0,
     'opsz' 24;
+    color: #000; /* Set icon color to black */
+}
+
+/* Change icon color on hover */
+.sidebar-links li a:hover .material-symbols-outlined {
+    color: #fff; /* Change to white on hover */
 }
 
 /* Logout confirmation modal styles */

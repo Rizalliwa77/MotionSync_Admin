@@ -1,0 +1,126 @@
+.translation-management {
+    padding: 20px;
+    width: 100%;
+    min-height: min-content;
+}
+
+.translation-section {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    padding: 25px;
+    width: 100%;
+}
+
+.translation-section h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.translation-info {
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.translation-algorithm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.translation-algorithm label {
+    font-weight: 500;
+    color: #666;
+}
+
+.translation-algorithm select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.update-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+}
+
+.update-section button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #0c8e6b;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.update-section button:hover {
+    background: #0a7d5c;
+}
+
+.update-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    background: #f8f8f8;
+    border-radius: 8px;
+}
+
+.update-section form label {
+    color: #666;
+}
+
+.update-section form input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.version-history {
+    width: 100%;
+}
+
+.version-history table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.version-history th {
+    background: #f2f2f2;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.version-history td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.version-history tr:last-child td {
+    border-bottom: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .translation-info {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .translation-section {
+        padding: 15px;
+    }
+}

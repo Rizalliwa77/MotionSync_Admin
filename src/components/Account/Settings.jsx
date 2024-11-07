@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../../assets/Account/Settings.css';
 import Sidebar from '../Sidebar';
-import { Link } from 'react-router-dom';
+
 const Settings = () => {
   const [isSidebarHovered, setIsSidebarHovered] = useState(false);
   const [showAdminPassword, setShowAdminPassword] = useState(false);

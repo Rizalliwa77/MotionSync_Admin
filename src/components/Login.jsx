@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { db } from '../firebase/firebaseConfig'; // Import Firestore
-import { collection, getDocs } from 'firebase/firestore'; // Import Firestore functions
+import { useNavigate, Link } from 'react-router-dom';
+import { db } from '../firebase/firebaseConfig';
+import { collection, getDocs } from 'firebase/firestore';
 import '../styles/Login.css';
 
 const Login = () => {
@@ -12,20 +12,20 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const adminCollection = collection(db, 'superAdmin'); // Reference to the admin collection
-    const adminDocs = await getDocs(adminCollection); // Fetch documents from the collection
+    const adminCollection = collection(db, 'superAdmin');
+    const adminDocs = await getDocs(adminCollection);
 
     let validCredentials = false;
 
     adminDocs.forEach((doc) => {
       const data = doc.data();
       if (data.username === email && data.password === password) {
-        validCredentials = true; // Check for valid credentials
+        validCredentials = true;
       }
     });
 
     if (validCredentials) {
-      navigate('/dashboard'); // Navigate to the dashboard on successful login
+      navigate('/dashboard');
     } else {
       setError('Invalid credentials. Please try again.');
     }
@@ -51,6 +51,14 @@ const Login = () => {
           />
           <a href="#">Forgot your password?</a>
           <button type="submit">Log In</button>
+          
+          <div className="divider">
+            <span>or</span>
+          </div>
+          
+          <p className="register-text">
+            Registering for a hub? <Link to="/" className="register-link">Click here</Link>
+          </p>
         </form>
       </div>
       <div className="overlay-container">

@@ -23,6 +23,9 @@
   margin: 0 auto;
   width: 100%;
   padding-bottom: 20px; /* Add space at the bottom */
+  max-height: 400px; /* Set a maximum height */
+  overflow-y: auto;  /* Add vertical scrollbar when needed */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
 }
 
 .page-title {

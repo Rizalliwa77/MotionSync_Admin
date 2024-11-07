@@ -110,7 +110,7 @@ const Sidebar = ({ onHoverChange }) => {
           <div className="user-profile">
             <img src={profile} alt="Profile Image" />
             <div className="user-detail">
-              <h3>Joven my love</h3>
+              <h3>Joven De los Santos</h3>
               <span>Super Admin</span>
             </div>
           </div>

@@ -28,7 +28,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 .main-content.sidebar-hovered {
@@ -48,7 +48,7 @@ body {
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-rows: auto;
     gap: 20px;
     flex-grow: 1;
     overflow: auto;
@@ -340,4 +340,21 @@ body {
         position: absolute;
         z-index: 1000;
     }
+}
+
+.main-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.main-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

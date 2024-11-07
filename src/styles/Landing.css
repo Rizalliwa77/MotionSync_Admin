@@ -49,9 +49,9 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-  
-  .login-button:hover {
+}
+
+.login-button:hover {
     background-color: #e5e0d8;
     border-color: #15130f;
-  }
+}
