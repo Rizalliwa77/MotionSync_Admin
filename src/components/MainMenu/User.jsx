@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import '../../assets/MainMenu/User.css';
 import Sidebar from '../Sidebar';
 
@@ -8,40 +9,24 @@ function User() {
   const [users, setUsers] = useState([]);
   const [isSidebarHovered, setIsSidebarHovered] = useState(false);
 
+  // Fetch users from Firestore
   useEffect(() => {
-    const initialUsers = [
-      { firstName: "John", lastName: "Doe", email: "john.doe@example.com", type: "FREE", status: "Active" },
-      { firstName: "Jane", lastName: "Smith", email: "jane.smith@example.com", type: "EDU", status: "Active" },
-      { firstName: "Bob", lastName: "Johnson", email: "bob.johnson@example.com", type: "FREE", status: "Inactive" },
-      { firstName: "Alice", lastName: "Williams", email: "alice.williams@example.com", type: "EDU", status: "Active" },
-      { firstName: "Michael", lastName: "Brown", email: "michael.brown@example.com", type: "FREE", status: "Active" },
-      { firstName: "Emily", lastName: "Davis", email: "emily.davis@example.com", type: "EDU", status: "Inactive" },
-      { firstName: "James", lastName: "Wilson", email: "james.wilson@example.com", type: "FREE", status: "Active" },
-      { firstName: "Olivia", lastName: "Miller", email: "olivia.miller@example.com", type: "EDU", status: "Active" },
-      { firstName: "William", lastName: "Taylor", email: "william.taylor@example.com", type: "FREE", status: "Inactive" },
-      { firstName: "Sophia", lastName: "Anderson", email: "sophia.anderson@example.com", type: "EDU", status: "Active" },
-      { firstName: "Juan", lastName: "dela Cruz", email: "juan.delacruz@gmail.com", type: "EDU", status: "Active" },
-      { firstName: "Maria", lastName: "Santos", email: "maria.santos84@gmail.com", type: "EDU", status: "Inactive" },
-      { firstName: "Jose", lastName: "Reyes", email: "j.reyes123@gmail.com", type: "EDU", status: "Inactive" },
-      { firstName: "Anna", lastName: "Garcia", email: "anna.garcia.ph@gmail.com", type: "FREE", status: "Active" },
-      { firstName: "Mark", lastName: "Bautista", email: "mark.bautista77@gmail.com", type: "EDU", status: "Active" },
-      { firstName: "Luz", lastName: "Hernandez", email: "luz.hernandez.ph@gmail.com", type: "FREE", status: "Inactive" },
-      { firstName: "Carlos", lastName: "Aquino", email: "carlos.aquino@gmail.com", type: "FREE", status: "Inactive" },
-      { firstName: "Isabel", lastName: "Ramos", email: "isabel.ramos98@gmail.com", type: "EDU", status: "Active" },
-      { firstName: "Antonio", lastName: "Castillo", email: "antonio.castillo@gmail.com", type: "FREE", status: "Active" }
-    ];
+    const fetchUsers = async () => {
+      const db = getFirestore();
+      const usersCollection = collection(db, 'users');
+      try {
+        const querySnapshot = await getDocs(usersCollection);
+        const usersData = querySnapshot.docs.map((doc) => ({
+          id: doc.id, // Firestore document ID
+          ...doc.data(),
+        }));
+        setUsers(usersData);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
 
-    const usedIds = new Set();
-    const usersWithRandomIds = initialUsers.map(user => {
-      let id;
-      do {
-        id = Math.floor(Math.random() * 900) + 100; // Generate a random 3-digit number
-      } while (usedIds.has(id));
-      usedIds.add(id);
-      return { ...user, id };
-    });
-
-    setUsers(usersWithRandomIds);
+    fetchUsers();
   }, []);
 
   const handleSidebarHover = (hovered) => {
@@ -50,10 +35,9 @@ function User() {
 
   const handleSearch = () => {
     console.log(`Searching for: ${searchTerm}`);
-    // Implement search functionality here
-    const filteredUsers = users.filter(user => 
-      user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const filteredUsers = users.filter((user) =>
+      user.fname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.lname.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setUsers(filteredUsers);
@@ -66,7 +50,7 @@ function User() {
 
   const handleEditUser = () => {
     if (selectedUser) {
-      console.log(`Editing user: ${selectedUser.firstName} ${selectedUser.lastName}`);
+      console.log(`Editing user: ${selectedUser.fname} ${selectedUser.lname}`);
       // Implement edit user functionality here
     } else {
       alert('Please select a user to edit');
@@ -75,7 +59,7 @@ function User() {
 
   const handleDeleteUser = () => {
     if (selectedUser) {
-      console.log(`Deleting user: ${selectedUser.firstName} ${selectedUser.lastName}`);
+      console.log(`Deleting user: ${selectedUser.fname} ${selectedUser.lname}`);
       // Implement delete user functionality here
     } else {
       alert('Please select a user to delete');
@@ -84,7 +68,7 @@ function User() {
 
   const handleManagePermissions = () => {
     if (selectedUser) {
-      console.log(`Managing permissions for: ${selectedUser.firstName} ${selectedUser.lastName}`);
+      console.log(`Managing permissions for: ${selectedUser.fname} ${selectedUser.lname}`);
       // Implement manage permissions functionality here
     } else {
       alert('Please select a user to manage permissions');
@@ -97,9 +81,6 @@ function User() {
       <main className={`main-content ${isSidebarHovered ? 'sidebar-hovered' : ''}`}>
         <div className="overview-section">
           <h1>User Management</h1>
-          <div className="navigation-links">
-            {/* Add navigation links if needed */}
-          </div>
         </div>
 
         <div className="cards-container">
@@ -122,17 +103,17 @@ function User() {
                 </thead>
                 <tbody>
                   {users.map((user) => (
-                    <tr 
-                      key={user.id} 
+                    <tr
+                      key={user.uid}
                       onClick={() => setSelectedUser(user)}
-                      className={selectedUser && selectedUser.id === user.id ? 'selected' : ''}
+                      className={selectedUser && selectedUser.uid === user.uid ? 'selected' : ''}
                     >
-                      <td>{user.id}</td>
-                      <td>{user.firstName}</td>
-                      <td>{user.lastName}</td>
+                      <td>{user.uid}</td>
+                      <td>{user.fname}</td>
+                      <td>{user.lname}</td>
                       <td>{user.email}</td>
-                      <td>{user.type}</td>
-                      <td>{user.status}</td>
+                      <td>{user.userType}</td>
+                      <td>{user.accountStatus}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -151,7 +132,7 @@ function User() {
                     <p className="stat-description">Total Users</p>
                   </div>
                   <div className="stat-item">
-                    <h3 className="stat-number">{users.filter(user => user.status === 'Active').length}</h3>
+                    <h3 className="stat-number">{users.filter((user) => user.accountStatus === 'Active').length}</h3>
                     <p className="stat-description">Active Users</p>
                   </div>
                 </div>
@@ -159,9 +140,9 @@ function User() {
 
               <div className="card-section">
                 <h3>User Search</h3>
-                <input 
-                  type="text" 
-                  placeholder="Search users..." 
+                <input
+                  type="text"
+                  placeholder="Search users..."
                   className="user-search-input"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -192,7 +173,6 @@ function User() {
 
               <div className="card-section">
                 <h3>User Permissions</h3>
-                <p>Manage user access and permissions</p>
                 <button className="permission-btn" onClick={handleManagePermissions}>
                   <span className="material-symbols-outlined">admin_panel_settings</span>
                   Manage Permissions
@@ -202,10 +182,10 @@ function User() {
               {selectedUser && (
                 <div className="card-section">
                   <h3>Selected User</h3>
-                  <p><strong>Name:</strong> {selectedUser.firstName} {selectedUser.lastName}</p>
+                  <p><strong>Name:</strong> {selectedUser.fname} {selectedUser.lname}</p>
                   <p><strong>Email:</strong> {selectedUser.email}</p>
-                  <p><strong>Type:</strong> {selectedUser.type}</p>
-                  <p><strong>Status:</strong> {selectedUser.status}</p>
+                  <p><strong>Type:</strong> {selectedUser.userType}</p>
+                  <p><strong>Status:</strong> {selectedUser.accountStatus}</p>
                 </div>
               )}
             </div>

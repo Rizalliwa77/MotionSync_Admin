@@ -43,10 +43,13 @@
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    width: 100%;
+    overflow-x: auto;
 }
 
 .hubs-table {
     width: 100%;
+    min-width: 800px;
     border-collapse: collapse;
 }
 
@@ -141,4 +144,284 @@
     .folders-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
+}
+
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.course-card {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.course-header {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+}
+
+.course-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.edp-code {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.course-details p {
+    margin: 8px 0;
+    font-size: 0.9em;
+}
+
+.course-details strong {
+    color: #555;
+}
+
+.courses-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 25px;
+    padding: 25px;
+    width: 100%;
+}
+
+.course-icon-wrapper {
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.course-icon-wrapper:hover {
+    transform: scale(1.05);
+}
+
+.course-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+}
+
+.course-icon .material-symbols-outlined {
+    font-size: 48px;
+    color: #4a90e2;
+}
+
+.course-name {
+    margin-top: 8px;
+    font-size: 0.9em;
+    color: #333;
+    word-break: break-word;
+}
+
+/* Modal Styles */
+.course-details-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    width: 95%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    margin: 20px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.close-button {
+    cursor: pointer;
+    padding: 5px;
+}
+
+.close-button:hover {
+    background-color: #f5f5f5;
+    border-radius: 50%;
+}
+
+.modal-body p {
+    margin: 10px 0;
+}
+
+.enrolled-students {
+    margin-top: 20px;
+}
+
+.enrolled-students ul {
+    list-style: none;
+    padding-left: 20px;
+}
+
+.enrolled-students li {
+    margin: 5px 0;
+    color: #666;
+}
+
+/* Main content width adjustments */
+.main-content {
+    flex: 1;
+    padding: 20px 40px;
+    transition: margin-left 0.3s ease;
+    width: calc(100% - 80px); /* Adjust based on your sidebar width */
+    margin-left: 80px; /* Should match your collapsed sidebar width */
+}
+
+.main-content.sidebar-hovered {
+    width: calc(100% - 240px); /* Adjust based on your expanded sidebar width */
+    margin-left: 240px; /* Should match your expanded sidebar width */
+}
+
+/* Section Tabs */
+.section-tabs {
+    margin: 20px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab {
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    position: relative;
+}
+
+.tab.active {
+    color: #4a90e2;
+    font-weight: 500;
+}
+
+.tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #4a90e2;
+}
+
+/* Applications Table */
+.applications-section {
+    padding: 20px;
+}
+
+.applications-table-wrapper {
+    overflow-x: auto;
+}
+
+.applications-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.applications-table th,
+.applications-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.applications-table th {
+    background-color: #f8f9fa;
+    font-weight: 500;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+}
+
+.status-badge.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.approved {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-badge.rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-buttons button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: opacity 0.2s;
+}
+
+.approve-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.reject-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.action-buttons button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Status text styles */
+.status-text {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    color: #666;
+}
+
+/* Update status badge styles */
+.status-badge.approved {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* Optional: Add a loading state style */
+.action-buttons button.loading {
+    opacity: 0.7;
+    cursor: wait;
 }
