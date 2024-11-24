@@ -1,0 +1,440 @@
+body, html {
+  width: 100%;
+  height: 100%;
+  background-color: #f5f5f3 !important;
+  overflow-y: auto;
+}
+
+#root {
+  background-color: white;
+  min-height: 100vh;
+  position: relative;
+}
+
+.registration-container {
+  max-width: 2000px;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 2rem 2rem;
+  background-color: white;
+  position: relative;
+  z-index: 1;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.header-container {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.motionsync-logo {
+  max-width: 200px;
+  margin-bottom: 20px;
+}
+
+.white-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f5f5f3;
+  background-image: url('../../assets/images/hand-pattern.svg');
+  background-size: 300px;
+  opacity: 0.1;
+  z-index: 0;
+  min-height: 150vh;
+}
+
+.form-row {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.add-button {
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 20px 0;
+}
+
+.add-button:before {
+  content: '+';
+  font-size: 20px;
+}
+
+.educators-table {
+  overflow-x: auto;
+  margin: 20px 0;
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background-color: #e8f5f1;
+  padding: 12px;
+  text-align: left;
+}
+
+td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.file-upload {
+  margin: 20px 0;
+}
+
+.file-upload input[type="file"] {
+  display: none;
+}
+
+.file-upload label {
+  display: block;
+  padding: 10px;
+  background-color: #e8f5f1;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.footer-navigation {
+  margin-top: 40px;
+  text-align: right;
+}
+
+.footer-navigation button {
+  background-color: #333;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.footer-navigation button:hover {
+  background-color: #444;
+}
+
+.certification-upload {
+  margin: 10px 0;
+}
+
+.program-entry {
+  margin-bottom: 30px;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+}
+
+section {
+  margin-bottom: 40px;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.section-description {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.more-options {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+  pointer-events: none;
+}
+
+.educators-table table {
+  min-width: 100%;
+  border-collapse: collapse;
+}
+
+.educators-table th {
+  background-color: #e8f5f1;
+  padding: 15px 20px;
+  text-align: left;
+  font-weight: 500;
+}
+
+.educators-table td {
+  padding: 12px 20px;
+  border: 1px solid #ddd;
+}
+
+.educators-table input {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: transparent;
+}
+
+.file-upload label {
+  display: block;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border: 2px dashed #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+.file-upload label:hover {
+  border-color: #999;
+  background-color: #fafafa;
+}
+
+.certification-upload {
+  margin: 15px 0;
+}
+
+.certification-upload label {
+  display: block;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border: 2px dashed #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  color: #666;
+}
+
+.add-button {
+  color: #666;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+.add-button:before {
+  content: '+';
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+.footer-navigation button {
+  background-color: #333;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.footer-navigation button:hover {
+  background-color: #444;
+}
+
+/* Add responsive adjustments */
+@media (max-width: 2000px) {
+  .registration-container {
+    max-width: 98%;
+    padding: 2rem 2rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .registration-container {
+    padding: 2rem 3rem;
+  }
+  
+  .program-entry .form-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .registration-container {
+    padding: 1.5rem;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+/* Add/update these styles */
+.programs-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  width: 100%;
+  margin: 20px 0;
+  padding: 0 0;
+}
+
+.program-entry {
+  background-color: white;
+  padding: 35px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 100%;
+}
+
+.program-entry .form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.program-entry input,
+.program-entry select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.program-entry textarea {
+  flex: 1;
+  min-height: 120px;
+  padding: 12px;
+  margin-bottom: 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Update responsive breakpoints for the grid */
+@media (max-width: 1400px) {
+  .programs-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .programs-container {
+    grid-template-columns: 1fr;
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+.error {
+  border-color: #dc3545 !important;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+input.error:focus,
+select.error:focus,
+textarea.error:focus {
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.remove-button {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 8px;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.remove-button:hover {
+  opacity: 1;
+}
+
+.file-selected {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.remove-file-button {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 8px;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.remove-file-button:hover {
+  opacity: 1;
+}
+
+/* Update file upload label to accommodate remove button */
+.file-upload label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border: 2px dashed #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  color: #666;
+  transition: all 0.3s ease;
+}

@@ -12,6 +12,12 @@ import UserContent from './components/General/userContent';
 import HubContent from './components/General/hubContent';
 import Analytics from './components/General/Analytics';
 import Notifications from './components/General/Notifications';
+import PageOne from './components/Registration/pageOne';
+import RegistrationOne from './components/Registration/registrationOne';
+import RegistrationTwo from './components/Registration/registrationTwo';
+import RegistrationThree from './components/Registration/registrationThree';
+import RegistrationFour from './components/Registration/registrationFour';
+import RegistrationFive from './components/Registration/registrationFive';
 
 const App = () => {
   return (
@@ -30,6 +36,12 @@ const App = () => {
         <Route path="/hub-content" element={<HubContent />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/notifications" element={<Notifications />} />
+        <Route path="/page-one" element={<PageOne />} />
+        <Route path="/registration-one" element={<RegistrationOne />} />
+        <Route path="/registration-two" element={<RegistrationTwo />} />
+        <Route path="/registration-three" element={<RegistrationThree />} />
+        <Route path="/registration-four" element={<RegistrationFour />} />
+        <Route path="/registration-complete" element={<RegistrationFive />} />
       </Routes>
     </Router>
   );

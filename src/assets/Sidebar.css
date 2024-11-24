@@ -208,15 +208,12 @@ body {
     'wght' 400,
     'GRAD' 0,
     'opsz' 24;
-    color: #000; /* Set icon color to black */
+    color: #000;
 }
-
-/* Change icon color on hover */
 .sidebar-links li a:hover .material-symbols-outlined {
     color: #fff; /* Change to white on hover */
 }
 
-/* Logout confirmation modal styles */
 .logout-confirmation-modal {
   position: fixed;
   top: 0;

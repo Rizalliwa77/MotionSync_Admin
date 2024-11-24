@@ -1,0 +1,122 @@
+/* Reset margins and padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Main container styling */
+.page-container {
+  display: flex;
+  padding: 1.5rem;
+  background-color: white;
+  height: 100vh;
+  margin: 0.25in;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+
+/* Left section styling */
+.left-section {
+  flex: 1;
+  min-width: 300px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.75rem;
+}
+
+.logo img {
+  max-width: 150px;
+  margin-bottom: 1rem;
+}
+
+.alpha-badge {
+  background-color: #40E0B5;
+  color: black;
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+h1 {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  color: #1A1A1A;
+}
+
+.description, .sub-description {
+  color: #333;
+  margin-bottom: 1rem;
+  max-width: 600px;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+
+.register-button {
+  background-color: #1A1A1A;
+  color: white;
+  padding: 0.8rem 1.6rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  width: fit-content;
+  margin-top: 0.5rem;
+}
+
+/* Right section styling */
+.right-section {
+  flex: 1;
+  min-width: 300px;
+  position: relative;
+  background: linear-gradient(to bottom, #008264, white);
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  height: fit-content;
+}
+
+.download-button {
+  background-color: #1A1A1A;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 50px;
+  margin-bottom: 2rem;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.phone-mockup {
+  max-width: 80%;
+  width: 100%;
+  height: auto;
+}
+
+.phone-mockup img {
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  object-fit: contain;
+}
+
+/* Add responsive adjustments */
+@media (max-width: 1024px) {
+  .page-container {
+    flex-direction: column;
+    gap: 3rem;
+  }
+  
+  .left-section, .right-section {
+    width: 100%;
+  }
+}
