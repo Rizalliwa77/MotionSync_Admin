@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import "../../assets/Registration/RegistrationFive.css";
+import "src/assets/Registration/RegistrationFive.css";
 
 const RegistrationFive = () => {
   const navigate = useNavigate();
