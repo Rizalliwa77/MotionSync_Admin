@@ -18,197 +18,395 @@
   margin-left: 260px; /* Adjust this value as needed */
 }
 
-.settings-container {
+.settings-wrapper {
+  padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  width: 100%;
-  padding-bottom: 20px; /* Add space at the bottom */
-  max-height: 400px; /* Set a maximum height */
-  overflow-y: auto;  /* Add vertical scrollbar when needed */
-  overflow-x: hidden; /* Hide horizontal scrollbar */
 }
 
-.page-title {
-  font-size: 24px;
+.settings-header {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.settings-container {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 2rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-height: 400px;
+}
+
+/* Navigation Styles */
+.settings-nav {
+  background: #f8f9fa;
+  padding: 1rem 0;
+}
+
+.nav-item {
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.nav-item.active {
+  background: #00A67E;
+  color: white;
+}
+
+/* Content Styles */
+.settings-content {
+  padding: 2rem;
+}
+
+.settings-section {
+  margin-bottom: 2rem;
+}
+
+.settings-section h2 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #666;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #00A67E;
+}
+
+.checkbox-group label {
+  color: #666;
+  cursor: pointer;
+}
+
+/* Save Button */
+.save-button {
+  display: block;
+  margin-left: auto;
+  margin-top: 1rem;
+  padding: 0.8rem 2rem;
+  background: #00A67E;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.save-button:hover {
+  background: #008c6a;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .settings-container {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-nav {
+    display: flex;
+    overflow-x: auto;
+    padding: 0.5rem;
+  }
+
+  .nav-item {
+    white-space: nowrap;
+  }
+
+  .settings-content {
+    padding: 1rem;
+  }
+}
+
+.settings-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+}
+
+.settings-header {
+  padding: 2rem;
+  margin: 0;
+  font-size: 2rem;
   font-weight: 600;
   color: #333;
-  margin-bottom: 20px;
+  border-bottom: 2px solid #eee;
+  background-color: white;
+  text-align: center;
 }
 
-.settings-content {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+.settings-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
 }
 
-/* Ensure the settings groups are responsive */
-.settings-group {
-  background-color: #fff;
+/* Sidebar Styles */
+.settings-sidebar {
+  width: 280px;
+  background-color: white;
+  border-right: 2px solid #eee;
+  padding: 1.5rem 0;
+}
+
+.sidebar-item {
+  padding: 1.2rem 2rem;
+  margin: 0.5rem 1rem;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.2s ease;
+  font-weight: 500;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  transition: transform 0.3s ease; /* Add transition for hover effect */
+  border: 1px solid transparent;
 }
 
-.settings-group:hover {
-  transform: translateY(-5px); /* Lift effect on hover */
+.sidebar-item:hover {
+  background-color: #f8f9fa;
+  color: #00A67E;
+  border-color: #00A67E;
+}
+
+.sidebar-item.active {
+  background-color: #00A67E;
+  color: white;
+  border-color: #00A67E;
+}
+
+/* Main Content Area */
+.settings-main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .settings-card {
-  background-color: #f9f9f9;
-  border-radius: 6px;
-  padding: 15px;
-  margin-bottom: 15px;
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eee;
 }
 
-.settings-card h3 {
-  font-size: 16px;
-  font-weight: 600;
+.settings-card h2 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.2rem;
   color: #333;
-  margin-bottom: 10px;
+  font-weight: 600;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid #eee;
 }
 
-.setting-item {
-  margin-bottom: 10px;
+/* Form Controls */
+.form-group {
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-.setting-item label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 5px;
+.form-group label {
+  min-width: 140px;
+  color: #666;
+  font-weight: 400;
+  font-size: 0.9rem;
+  margin-bottom: 0;
 }
 
-.setting-item select,
-.setting-item input[type="number"] {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
+.form-control {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 0.9rem;
+  color: #333;
+  transition: all 0.2s ease;
+  background-color: #fff;
+  height: 36px;
 }
 
-.setting-item input[type="checkbox"] {
-  margin-right: 5px;
+/* Adjust the select dropdown arrow */
+select.form-control {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath fill='%23666' d='M0 2l4 4 4-4z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 8px 8px;
+  padding-right: 2rem;
+  appearance: none;
 }
 
-.settings-actions {
-  margin-top: 20px;
+.form-control:hover {
+  border-color: #00A67E;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #00A67E;
+  box-shadow: 0 0 0 3px rgba(0, 166, 126, 0.1);
+}
+
+/* Toggle Switch */
+.toggle-group {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.toggle-group:hover {
+  border-color: #00A67E;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toggle input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 1rem;
+  accent-color: #00A67E;
+  cursor: pointer;
+}
+
+.toggle-label {
+  color: #666;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+/* Footer */
+.settings-footer {
+  padding: 1.5rem 2rem;
+  background-color: white;
+  border-top: 2px solid #eee;
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
 }
 
-.settings-btn {
-  padding: 10px 20px;
-  background-color: #0c8e6b;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.settings-btn:hover {
-  background-color: #0a7d5c;
-}
-
-/* Admin password modal styles */
-.admin-password-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.admin-password-content {
-  background-color: #fff;
-  padding: 20px;
+.save-button {
+  padding: 1rem 2.5rem;
+  background-color: #00A67E;
+  color: white;
+  border: 2px solid #00A67E;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 300px;
-}
-
-.admin-password-content h2 {
-  margin-bottom: 15px;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.admin-password-content form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.admin-password-content input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.admin-password-buttons {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.admin-password-buttons button {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 14px;
   font-weight: 500;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.admin-password-buttons .confirm-btn {
-  background-color: #0c8e6b;
-  color: #fff;
+.save-button:hover {
+  background-color: #008c6a;
+  border-color: #008c6a;
+  transform: translateY(-1px);
 }
 
-.admin-password-buttons .confirm-btn:hover {
-  background-color: #0a7d5c;
+.save-button:active {
+  transform: translateY(0);
 }
 
-.admin-password-buttons .cancel-btn {
-  background-color: #f2f2f2;
-  color: #333;
+/* Input types specific styling */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
 }
 
-.admin-password-buttons .cancel-btn:hover {
-  background-color: #e0e0e0;
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: #00A67E;
+  box-shadow: 0 0 0 3px rgba(0, 166, 126, 0.1);
+  outline: none;
 }
 
-/* Additional mobile responsiveness */
-@media (max-width: 1200px) {
-  .settings-content {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
-  .main-content {
-    padding: 10px;
+  .settings-layout {
+    flex-direction: column;
   }
 
-  .main-content.sidebar-hovered {
-    margin-left: 0;
+  .settings-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 2px solid #eee;
+    padding: 1rem;
+    display: flex;
+    overflow-x: auto;
   }
 
-  .settings-content {
+  .sidebar-item {
+    white-space: nowrap;
+    padding: 1rem 1.5rem;
+    margin: 0 0.5rem;
+  }
+
+  .settings-main {
+    padding: 1.5rem;
+  }
+
+  .settings-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .settings-card {
+    padding: 1.5rem;
   }
 }

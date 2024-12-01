@@ -13,9 +13,20 @@ const RegistrationOne = () => {
   const [isOtherChecked, setIsOtherChecked] = useState(false);
   const [agreement, setAgreement] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+  const initialToken = () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let token = '#';
+    for (let i = 0; i < 9; i++) {
+      token += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return `${token.slice(0,4)}-${token.slice(4,7)}-${token.slice(7)}`;
+  };
+
   const [formData, setFormData] = useState({
     hubName: "",
     organizationType: "",
+    hubEmail: "",
+    hubToken: initialToken(),
     focus: [],
     address: {
       street: "",
@@ -106,93 +117,63 @@ const RegistrationOne = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    // Hub Name validation
+    // Simplified required field validations
     if (!formData.hubName.trim()) {
       newErrors.hubName = 'Hub name is required';
-    } else if (formData.hubName.length < 2) {
-      newErrors.hubName = 'Hub name must be at least 2 characters';
     }
 
-    // Organization Type validation
     if (!formData.organizationType) {
       newErrors.organizationType = 'Organization type is required';
     }
 
-    // Focus Areas validation
-    if (formData.focus.length === 0 && !isOtherChecked) {
-      newErrors.focus = 'Please select at least one focus area';
-    }
-
-    // Address validations
+    // Basic address validations - only check if fields are filled
     if (!formData.address.street.trim()) {
       newErrors.street = 'Street address is required';
     }
     if (!formData.address.city.trim()) {
       newErrors.city = 'City is required';
-    } else if (!/^[a-zA-Z\s-]+$/.test(formData.address.city)) {
-      newErrors.city = 'City should only contain letters, spaces, and hyphens';
     }
     if (!formData.address.stateProvince.trim()) {
       newErrors.stateProvince = 'State/Province is required';
     }
     if (!formData.address.country.trim()) {
       newErrors.country = 'Country is required';
-    } else if (!/^[a-zA-Z\s-]+$/.test(formData.address.country)) {
-      newErrors.country = 'Country should only contain letters, spaces, and hyphens';
     }
     if (!formData.address.zipCode.trim()) {
       newErrors.zipCode = 'ZIP code is required';
-    } else if (!/^\d{5}(-\d{4})?$/.test(formData.address.zipCode)) {
-      newErrors.zipCode = 'Please enter a valid ZIP code (e.g., 12345 or 12345-6789)';
     }
 
-    // Contact Person validations
+    // Simplified contact person validations
     if (!formData.contactPerson.fullName.trim()) {
       newErrors.fullName = 'Contact person name is required';
-    } else if (!/^[a-zA-Z\s.'-]+$/.test(formData.contactPerson.fullName)) {
-      newErrors.fullName = 'Name should only contain letters, spaces, and basic punctuation';
     }
-
     if (!formData.contactPerson.position.trim()) {
       newErrors.position = 'Position is required';
     }
-
     if (!formData.contactPerson.emailAddress.trim()) {
       newErrors.emailAddress = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contactPerson.emailAddress)) {
-      newErrors.emailAddress = 'Please enter a valid email address';
     }
-
     if (!formData.contactPerson.phoneNumber.trim()) {
       newErrors.phoneNumber = 'Phone number is required';
-    } else if (!/^\+?[\d\s-()]{10,}$/.test(formData.contactPerson.phoneNumber)) {
-      newErrors.phoneNumber = 'Please enter a valid phone number';
     }
 
-    if (formData.contactPerson.socialMedia) {
-      if (!/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$/.test(formData.contactPerson.socialMedia)) {
-        newErrors.socialMedia = 'Please enter a valid social media URL';
-      }
-    }
-
-    // Objectives validations
+    // Basic objectives validations
     if (!formData.objectives.missionStatement.trim()) {
       newErrors.missionStatement = 'Mission statement is required';
-    } else if (formData.objectives.missionStatement.length < 50) {
-      newErrors.missionStatement = 'Mission statement should be at least 50 characters';
     }
-
     if (!formData.objectives.visionStatement.trim()) {
       newErrors.visionStatement = 'Vision statement is required';
-    } else if (formData.objectives.visionStatement.length < 50) {
-      newErrors.visionStatement = 'Vision statement should be at least 50 characters';
     }
 
     // Agreement validation
     if (!agreement) {
       newErrors.agreement = 'Please indicate your agreement';
-    } else if (agreement === 'no') {
-      newErrors.agreement = 'You must agree to continue';
+    }
+
+    if (!formData.hubEmail.trim()) {
+      newErrors.hubEmail = 'Hub email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.hubEmail)) {
+      newErrors.hubEmail = 'Please enter a valid email address';
     }
 
     setErrors(newErrors);
@@ -203,7 +184,6 @@ const RegistrationOne = () => {
     e.preventDefault();
     
     if (!validateForm()) {
-      // Scroll to the first error
       const firstError = document.querySelector('.error-message');
       if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
@@ -224,6 +204,8 @@ const RegistrationOne = () => {
       await setDoc(form1Ref, {
         hubName: formData.hubName,
         organizationType: formData.organizationType,
+        hubEmail: formData.hubEmail,
+        hubToken: formData.hubToken,
         Focus: [...formData.focus, isOtherChecked ? otherSpecification : null].filter(Boolean),
         organizationStructureUrl: organizationStructureUrl
       });
@@ -262,7 +244,7 @@ const RegistrationOne = () => {
           <h1>HUB/ORGANIZATION INFORMATION</h1>
         </div>
         <form onSubmit={handleSubmit}>
-          {/* Hub/Organization Name */}
+          {/* Hub/Organization Name and Type */}
           <div className="form-row">
             <div className="form-group">
               <input 
@@ -289,6 +271,31 @@ const RegistrationOne = () => {
                 <option value="other">Other</option>
               </select>
               {renderError('organizationType')}
+            </div>
+          </div>
+
+          {/* Add new row for Hub Email and Token Display */}
+          <div className="form-row">
+            <div className="form-group">
+              <input 
+                type="email"
+                name="hubEmail"
+                value={formData.hubEmail}
+                onChange={handleInputChange}
+                placeholder="Hub/Organization Email"
+                className={errors.hubEmail ? 'error' : ''}
+              />
+              {renderError('hubEmail')}
+            </div>
+            <div className="form-group token-group">
+              <input 
+                type="text"
+                value={formData.hubToken}
+                readOnly
+                className="hub-token"
+                placeholder="Hub Token"
+              />
+              <span className="token-note">This will be your hub's unique token ID.</span>
             </div>
           </div>
 

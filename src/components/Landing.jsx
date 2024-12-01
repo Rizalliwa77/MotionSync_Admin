@@ -17,7 +17,6 @@ const Landing = () => {
         Speak Louder
       </h1>
       
-      
       <button 
         className="login-button"
         onClick={() => navigate('/login')}

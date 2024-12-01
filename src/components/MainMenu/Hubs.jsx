@@ -1,187 +1,209 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/MainMenu/Hubs.css';
 import Sidebar from '../Sidebar';
+import { db } from '../../firebase/firebaseConfig';
+import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 
 function Hubs() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [pendingHubs, setPendingHubs] = useState([]);
+  const [approvedHubs, setApprovedHubs] = useState([]);
   const [selectedHub, setSelectedHub] = useState(null);
-  const [hubs, setHubs] = useState([]);
   const [isSidebarHovered, setIsSidebarHovered] = useState(false);
+  const [showDeniedHubs, setShowDeniedHubs] = useState(false);
 
+  // Fetch data from Firebase
   useEffect(() => {
-    const initialHubs = [
-      { name: "Sign Language Institute", email: "info@signlanguageinstitute.com", users: 10, tokenId: "#SLI1-" },
-      { name: "Hands of Hope ASL Center", email: "contact@handsofhopeasl.org", users: 10, tokenId: "#HHC2-" },
-      { name: "ASL Learning Hub", email: "support@asllearninghub.com", users: 11, tokenId: "#ALH3-" },
-      { name: "Fluent Fingers ASL Academy", email: "info@fluentfingersasl.edu", users: 10, tokenId: "#FFA4-" },
-      { name: "Deaf Community Learning Center", email: "outreach@dclcenter.org", users: 10, tokenId: "#DCCS-" },
-      { name: "Sign and Communicate Academy", email: "info@signandcommunicate.com", users: 11, tokenId: "#SCA6-" },
-      { name: "American Sign Language School", email: "admin@asi-school.org", users: 11, tokenId: "#ALS7-" },
-      { name: "Expressive Hands ASL Center", email: "contact@expressivehandsasl.com", users: 10, tokenId: "#EHC8-" },
-      { name: "Visual Voices Learning Institute", email: "info@visualvoicesinstitute.org", users: 11, tokenId: "#VV19-" }
-    ];
+    const fetchHubs = async () => {
+      try {
+        const registerRef = collection(db, "register");
+        const querySnapshot = await getDocs(registerRef);
+        const pending = [];
+        const approved = [];
+        
+        querySnapshot.forEach((doc) => {
+          const data = { ...doc.data(), id: doc.id };
+          if (!data.status) {
+            pending.push(data);
+          } else if (data.status === 'approved') {
+            approved.push(data);
+          }
+        });
 
-    setHubs(initialHubs);
+        setPendingHubs(pending);
+        setApprovedHubs(approved);
+      } catch (error) {
+        console.error("Error fetching hubs:", error);
+      }
+    };
+
+    fetchHubs();
   }, []);
 
-  const handleSidebarHover = (hovered) => {
-    setIsSidebarHovered(hovered);
-  };
-
-  const handleSearch = () => {
-    console.log(`Searching for: ${searchTerm}`);
-    // Implement search functionality here
-  };
-
-  const handleAddHub = () => {
-    console.log('Adding new hub');
-    // Implement add hub functionality here
-  };
-
-  const handleEditHub = () => {
-    if (selectedHub) {
-      console.log(`Editing hub: ${selectedHub.name}`);
-      // Implement edit hub functionality here
-    } else {
-      alert('Please select a hub to edit');
+  const handleApprove = async (hubId) => {
+    try {
+      const hubRef = doc(db, "register", hubId);
+      await updateDoc(hubRef, {
+        status: 'approved'
+      });
+      // Refresh the lists
+      window.location.reload();
+    } catch (error) {
+      console.error("Error approving hub:", error);
     }
   };
 
-  const handleDeleteHub = () => {
-    if (selectedHub) {
-      console.log(`Deleting hub: ${selectedHub.name}`);
-      // Implement delete hub functionality here
-    } else {
-      alert('Please select a hub to delete');
+  const handleDeny = async (hubId) => {
+    try {
+      const hubRef = doc(db, "register", hubId);
+      await updateDoc(hubRef, {
+        status: 'denied'
+      });
+      // Refresh the lists
+      window.location.reload();
+    } catch (error) {
+      console.error("Error denying hub:", error);
     }
   };
 
-  const handleManageHubSettings = () => {
-    if (selectedHub) {
-      console.log(`Managing settings for: ${selectedHub.name}`);
-      // Implement manage hub settings functionality here
-    } else {
-      alert('Please select a hub to manage settings');
+  const handleDisableHub = async (hubId) => {
+    try {
+      const hubRef = doc(db, "register", hubId);
+      await updateDoc(hubRef, {
+        status: 'disabled'
+      });
+      // Refresh the lists
+      window.location.reload();
+    } catch (error) {
+      console.error("Error disabling hub:", error);
     }
   };
 
   return (
     <div className="hubs-page">
-      <Sidebar onHoverChange={handleSidebarHover} />
+      <Sidebar onHoverChange={(hovered) => setIsSidebarHovered(hovered)} />
       <main className={`main-content ${isSidebarHovered ? 'sidebar-hovered' : ''}`}>
         <div className="overview-section">
-          <h1>Learning Hubs Management</h1>
+          <h1>Hub Registration Management</h1>
         </div>
 
-        <div className="cards-container">
-          {/* Hubs Table Card */}
-          <div className="card hubs-table-card">
-            <div className="card-header">
-              <h2>Learning Hubs List</h2>
-            </div>
-            <div className="card-content table-container">
+        {/* Pending Registrations Table */}
+        <div className="card">
+          <div className="card-header">
+            <h2>Pending Hub Registrations</h2>
+          </div>
+          <div className="table-container">
+            <table className="hubs-table">
+              <thead>
+                <tr>
+                  <th>Hub Name</th>
+                  <th>Email Address</th>
+                  <th>Token ID</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pendingHubs.map((hub) => (
+                  <tr key={hub.id}>
+                    <td>{hub.hubName}</td>
+                    <td>{hub.hubEmail}</td>
+                    <td>{hub.hubToken}</td>
+                    <td className="action-buttons">
+                      <button 
+                        className="approve-btn"
+                        onClick={() => handleApprove(hub.id)}
+                      >
+                        <span className="material-symbols-outlined">check</span>
+                      </button>
+                      <button 
+                        className="deny-btn"
+                        onClick={() => handleDeny(hub.id)}
+                      >
+                        <span className="material-symbols-outlined">close</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Approved Hubs Table */}
+        <div className="card mt-4">
+          <div className="card-header">
+            <h2>Approved Hubs</h2>
+          </div>
+          <div className="table-container">
+            <table className="hubs-table">
+              <thead>
+                <tr>
+                  <th>Hub Name</th>
+                  <th>Email Address</th>
+                  <th>Token ID</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {approvedHubs.map((hub) => (
+                  <tr key={hub.id}>
+                    <td>{hub.hubName}</td>
+                    <td>{hub.hubEmail}</td>
+                    <td>{hub.hubToken}</td>
+                    <td className="action-buttons">
+                      <button className="edit-btn">
+                        <span className="material-symbols-outlined">edit</span>
+                      </button>
+                      <button 
+                        className="disable-btn"
+                        onClick={() => handleDisableHub(hub.id)}
+                      >
+                        <span className="material-symbols-outlined">block</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Denied Hubs Button - Now in fixed position */}
+        <button 
+          className="denied-hubs-btn fixed-bottom-right"
+          onClick={() => setShowDeniedHubs(!showDeniedHubs)}
+        >
+          <span className="material-symbols-outlined">
+            block
+          </span>
+          View Denied Hubs
+        </button>
+
+        {/* Denied Hubs Modal */}
+        {showDeniedHubs && (
+          <div className="modal">
+            <div className="modal-content">
+              <h2>Denied Hubs</h2>
               <table className="hubs-table">
                 <thead>
                   <tr>
-                    <th>Learning Hub</th>
+                    <th>Hub Name</th>
                     <th>Email Address</th>
-                    <th>User #</th>
                     <th>Token ID</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {hubs.map((hub, index) => (
-                    <tr 
-                      key={index} 
-                      onClick={() => setSelectedHub(hub)}
-                      className={selectedHub && selectedHub.name === hub.name ? 'selected' : ''}
-                    >
-                      <td>{hub.name}</td>
-                      <td>{hub.email}</td>
-                      <td>{hub.users}</td>
-                      <td>{hub.tokenId}</td>
-                    </tr>
-                  ))}
+                  {/* Add denied hubs data here */}
                 </tbody>
               </table>
+              <button onClick={() => setShowDeniedHubs(false)}>Close</button>
             </div>
           </div>
-
-          {/* Hubs Management Card */}
-          <div className="card hubs-management-card">
-            <div className="scrollable-content">
-              <div className="card-section">
-                <h3>Hubs Statistics</h3>
-                <div className="hubs-statistics-content">
-                  <div className="stat-item">
-                    <h3 className="stat-number">{hubs.length}</h3>
-                    <p className="stat-description">Total Hubs</p>
-                  </div>
-                  <div className="stat-item">
-                    <h3 className="stat-number">{hubs.reduce((total, hub) => total + hub.users, 0)}</h3>
-                    <p className="stat-description">Total Users</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card-section">
-                <h3>Hub Search</h3>
-                <input 
-                  type="text" 
-                  placeholder="Search hubs..." 
-                  className="hub-search-input"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <button className="search-btn" onClick={handleSearch}>
-                  <span className="material-symbols-outlined">search</span>
-                  Search
-                </button>
-              </div>
-
-              <div className="card-section">
-                <h3>Hub Actions</h3>
-                <div className="quick-actions">
-                  <button className="action-btn" onClick={handleAddHub}>
-                    <span className="material-symbols-outlined">add_circle</span>
-                    Add New Hub
-                  </button>
-                  <button className="action-btn" onClick={handleEditHub}>
-                    <span className="material-symbols-outlined">edit</span>
-                    Edit Hub
-                  </button>
-                  <button className="action-btn" onClick={handleDeleteHub}>
-                    <span className="material-symbols-outlined">delete</span>
-                    Delete Hub
-                  </button>
-                </div>
-              </div>
-
-              <div className="card-section">
-                <h3>Hub Settings</h3>
-                <p>Manage hub access and settings</p>
-                <button className="settings-btn" onClick={handleManageHubSettings}>
-                  <span className="material-symbols-outlined">settings</span>
-                  Manage Settings
-                </button>
-              </div>
-
-              {selectedHub && (
-                <div className="card-section">
-                  <h3>Selected Hub</h3>
-                  <p><strong>Name:</strong> {selectedHub.name}</p>
-                  <p><strong>Email:</strong> {selectedHub.email}</p>
-                  <p><strong>Users:</strong> {selectedHub.users}</p>
-                  <p><strong>Token ID:</strong> {selectedHub.tokenId}</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        )}
       </main>
     </div>
   );
 }
 
 export default Hubs;
+
 

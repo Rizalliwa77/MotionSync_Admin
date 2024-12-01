@@ -75,15 +75,13 @@
   
   h1 {
     font-family: 'Poppins', sans-serif;
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: #000000;
-    margin: 0;
-    text-align: right;
-    letter-spacing: -0.02em;
-    line-height: 1.3;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    margin-top: -0.5rem;
+    color: #333;
     position: relative;
-    text-transform: uppercase;
+    top: -0.5rem;
   }
   
   form {
@@ -97,10 +95,10 @@
   
   .form-row {
     display: flex;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    gap: 2rem;
+    margin-bottom: 2rem;
     width: 100%;
-    align-items: center;
+    align-items: flex-start;
   }
   
   .form-group {
@@ -484,5 +482,224 @@
   .form-group {
     position: relative;
     margin-bottom: 1rem;
+  }
+  
+  /* Add these new styles */
+  .hub-token {
+    background-color: #ffffff;
+    font-family: monospace;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    text-align: center;
+    cursor: not-allowed;
+    border: 2px solid #00A67E !important;
+    height: 45px;
+    padding: 0 1rem;
+    width: 180px !important;
+    border-radius: 8px;
+  }
+  
+  .hub-token:focus {
+    border-color: #00A67E !important;
+    box-shadow: none;
+  }
+  
+  .token-group {
+    position: relative;
+    flex: 0 0 auto !important;
+    margin-right: 1rem;
+  }
+  
+  .token-note {
+    position: absolute;
+    left: 0;
+    top: -45px;
+    font-size: 0.8rem;
+    color: #666;
+    padding: 8px;
+    width: 300px;
+    border-left: 3px solid #00A67E;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    line-height: 1.2;
+  }
+  
+  /* Adjust the email input to take remaining space */
+  .form-row .form-group:first-child {
+    flex: 1 1 auto;
+    margin-right: 1rem;
+  }
+  
+  @media (max-width: 1400px) {
+    .form-row {
+      gap: 1.5rem;
+    }
+    
+    .token-group {
+      margin-right: 0;
+    }
+  }
+  
+  /* Update the form-row styles for better spacing */
+  .form-row {
+    display: flex;
+    gap: 2rem; /* Increased gap between elements */
+    margin-bottom: 2rem; /* More space between rows */
+    width: 100%;
+    align-items: center;
+  }
+  
+  /* Style for the email input */
+  input[name="hubEmail"] {
+    width: 100%;
+    height: 45px;
+    padding: 0 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+  
+  input[name="hubEmail"]:focus {
+    border-color: #00A67E;
+    box-shadow: 0 0 0 4px rgba(0, 166, 126, 0.1);
+  }
+  
+  /* Refined token styles */
+  .hub-token {
+    background-color: #ffffff;
+    font-family: monospace;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    text-align: center;
+    cursor: not-allowed;
+    border: 2px solid #00A67E !important;
+    height: 45px;
+    padding: 0 1rem;
+    width: 180px !important;
+    border-radius: 8px;
+  }
+  
+  .hub-token:focus {
+    border-color: #00A67E !important;
+    box-shadow: none;
+  }
+  
+  /* Adjust group layouts */
+  .token-group {
+    position: relative;
+    flex: 0 0 auto !important;
+    margin-right: 1rem; /* Space from the right edge */
+  }
+  
+  .form-row .form-group:first-child {
+    flex: 1 1 auto;
+    margin-right: 1rem; /* Space between email and token */
+  }
+  
+  .token-note {
+    position: absolute;
+    left: 0;
+    top: -45px;
+    font-size: 0.8rem;
+    color: #666;
+    padding: 8px;
+    width: 300px;
+    border-left: 3px solid #00A67E;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    line-height: 1.2;
+  }
+  
+  @media (max-width: 1400px) {
+    .form-row {
+      gap: 1.5rem;
+    }
+    
+    .token-group {
+      margin-right: 0;
+    }
+  }
+  
+  /* Common styles for form rows */
+  .form-row {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    align-items: flex-start;
+  }
+  
+  /* Style for the first row (Hub Name and Organization Type) */
+  .form-row:first-of-type {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+  }
+  
+  /* Style for the second row (Email and Token) */
+  .form-row:nth-of-type(2) {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+  }
+  
+  /* Organization Type dropdown */
+  select[name="organizationType"] {
+    width: 100%;
+    height: 45px;
+    padding: 0 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background-color: white;
+  }
+  
+  /* Token container and styles */
+  .token-group {
+    position: relative;
+    width: 50%;
+    display: flex;
+    align-items: center;
+  }
+  
+  .hub-token {
+    background-color: #ffffff;
+    font-family: monospace;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    text-align: center;
+    cursor: not-allowed;
+    border: 2px solid #00A67E !important;
+    height: 45px;
+    padding: 0 1rem;
+    width: 100% !important;
+    border-radius: 8px;
+  }
+  
+  /* Token note styles */
+  .token-note {
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 40%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    color: #666;
+    padding: 8px;
+    width: calc(100% - 12px); 
+    border-left: 3px solid #00A67E;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    line-height: 1.2;
+    white-space: normal;
+  }
+  
+  @media (max-width: 1400px) {
+    .token-note {
+      left: 0;
+      top: -45px;
+      transform: none;
+      width: 100%;
+    }
   }
   

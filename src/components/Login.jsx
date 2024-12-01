@@ -12,7 +12,30 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    // ... existing login logic ...
+    setError('');
+    
+    try {
+      const superAdminRef = collection(db, 'superAdmin');
+      const querySnapshot = await getDocs(superAdminRef);
+      
+      let isAuthenticated = false;
+      
+      querySnapshot.forEach((doc) => {
+        const adminData = doc.data();
+        if (adminData.username === email && adminData.password === password) {
+          isAuthenticated = true;
+        }
+      });
+
+      if (isAuthenticated) {
+        navigate('/dashboard'); // Navigate to your admin dashboard
+      } else {
+        setError('Invalid credentials');
+      }
+    } catch (err) {
+      setError('An error occurred during login');
+      console.error('Login error:', err);
+    }
   };
 
   return (
