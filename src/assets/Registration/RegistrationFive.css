@@ -169,6 +169,17 @@ h1 {
   box-shadow: 0 4px 12px rgba(0, 166, 126, 0.2);
 }
 
+.completion-container {
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  background-image: url('../../assets/media/sign-language-pattern.png');
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 @media (max-width: 768px) {
   .completion-card {
     padding: 2.5rem;
