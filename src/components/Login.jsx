@@ -14,6 +14,12 @@ const Login = () => {
     e.preventDefault();
     setError('');
     
+    // Check for HubAdmin credentials first
+    if (email === 'HubAdmin' && password === '12345') {
+      navigate('/hub-admin/dashboard');
+      return;
+    }
+    
     try {
       const superAdminRef = collection(db, 'superAdmin');
       const querySnapshot = await getDocs(superAdminRef);
@@ -28,7 +34,7 @@ const Login = () => {
       });
 
       if (isAuthenticated) {
-        navigate('/dashboard'); // Navigate to your admin dashboard
+        navigate('/dashboard'); 
       } else {
         setError('Invalid credentials');
       }

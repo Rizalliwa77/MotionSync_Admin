@@ -18,6 +18,15 @@ import RegistrationTwo from './components/Registration/registrationTwo';
 import RegistrationThree from './components/Registration/registrationThree';
 import RegistrationFour from './components/Registration/registrationFour';
 import RegistrationFive from './components/Registration/registrationFive';
+// Updated imports for Hub Admin components
+import HubAdminDashboard from './components/HubAdmin/jsx/Main Menu/HubAdminDashboard';
+import HubAdmin_StudentList from './components/HubAdmin/jsx/Main Menu/HubAdmin_StudentList';
+import HubAdmin_EducatorList from './components/HubAdmin/jsx/Main Menu/HubAdmin_EducatorList';
+import HubAdmin_Content from './components/HubAdmin/jsx/Management/HubAdmin_Content';
+import HubAdmin_Setting from './components/HubAdmin/jsx/Account/HubAdmin_Setting';
+import HubAdmin_Profile from './components/HubAdmin/jsx/Account/HubAdmin_Profile';
+import HubAdmin_Messages from './components/HubAdmin/jsx/Management/HubAdmin_Messages';
+import HubAdmin_Classroom from './components/HubAdmin/jsx/Management/HubAdmin_Classroom';
 
 const App = () => {
   return (
@@ -42,6 +51,15 @@ const App = () => {
         <Route path="/registration-three" element={<RegistrationThree />} />
         <Route path="/registration-four" element={<RegistrationFour />} />
         <Route path="/registration-complete" element={<RegistrationFive />} />
+        {/* Hub Admin routes with updated component paths */}
+        <Route path="/hub-admin/dashboard" element={<HubAdminDashboard />} />
+        <Route path="/hub-admin/students" element={<HubAdmin_StudentList />} />
+        <Route path="/hub-admin/educators" element={<HubAdmin_EducatorList />} />
+        <Route path="/hub-admin/content" element={<HubAdmin_Content />} />
+        <Route path="/hub-admin/settings" element={<HubAdmin_Setting />} />
+        <Route path="/hub-admin/profile" element={<HubAdmin_Profile />} />
+        <Route path="/hub-admin/messages" element={<HubAdmin_Messages />} />
+        <Route path="/hub-admin/classroom" element={<HubAdmin_Classroom />} />
       </Routes>
     </Router>
   );

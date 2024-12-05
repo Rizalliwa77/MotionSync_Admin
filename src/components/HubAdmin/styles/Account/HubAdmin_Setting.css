@@ -1,0 +1,250 @@
+.settings-main-container {
+    flex: 1;
+    padding: 2rem;
+    padding-left: 3rem;
+    background-color: #f5f5f5;
+    transition: all 0.3s ease;
+    border-left: 1px solid #e0e0e0;
+    margin-left: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #333;
+    text-align: center;
+}
+
+.settings-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+.settings-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.settings-card:hover {
+    transform: translateY(-5px);
+}
+
+h2 {
+    font-size: 1.25rem;
+    color: #333;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.settings-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.setting-link {
+    padding: 1rem;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.setting-link:hover {
+    background-color: #e8e8e8;
+    transform: translateY(-1px);
+}
+
+.settings-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.settings-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.settings-btn.save {
+    background-color: #00A67E;
+}
+
+.settings-btn.recent {
+    background-color: #007BFF;
+}
+
+.settings-btn.default {
+    background-color: #FF5733;
+}
+
+.settings-btn:hover {
+    background-color: #008c69;
+}
+
+.settings-btn.recent:hover {
+    background-color: #0056b3;
+}
+
+.settings-btn.default:hover {
+    background-color: #c0392b;
+}
+
+/* Adjust layout when sidebar is hovered */
+.sidebar:hover ~ .settings-main-container {
+    transform: translateX(140px);
+    width: calc(100% - 280px);
+    margin-left: 140px;
+    transition: all 0.3s ease;
+}
+
+.sidebar:hover ~ .settings-main-container .settings-content {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1200px) {
+    .settings-content {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .sidebar:hover ~ .settings-main-container .settings-content {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .settings-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .settings-buttons {
+        flex-direction: column;
+    }
+    
+    .settings-btn {
+        width: 100%;
+    }
+    
+    .sidebar:hover ~ .settings-main-container {
+        transform: translateX(0);
+        width: 100%;
+        margin-left: 0;
+        padding: 1rem;
+    }
+}
+
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.settings-option-container {
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.settings-option {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.settings-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.settings-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.settings-option select,
+.settings-option input[type="number"] {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+    width: 150px;
+}
+
+.settings-option select:focus,
+.settings-option input:focus {
+    outline: none;
+    border-color: #007BFF;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+h3 {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.settings-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.settings-btn:disabled:hover {
+    background-color: #cccccc;
+    transform: none;
+}

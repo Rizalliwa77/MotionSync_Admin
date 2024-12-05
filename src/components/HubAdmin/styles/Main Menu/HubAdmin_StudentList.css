@@ -1,0 +1,228 @@
+.hub-admin-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+
+.main-content {
+    flex: 1;
+    padding: 30px;
+    margin-left: 85px; /* Match sidebar width */
+    transition: margin-left 0.4s ease;
+}
+
+.sidebar:hover ~ .main-content {
+    margin-left: 260px; /* Match sidebar hover width */
+}
+
+.users-management {
+    margin-bottom: 30px;
+}
+
+.users-management h1 {
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: #333;
+    text-align: center;
+}
+
+.search-container {
+    position: relative;
+    margin-bottom: 20px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 12px 40px 12px 12px;
+    background-color: #B8D1D1;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.search-bar:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(184, 209, 209, 0.5);
+}
+
+.search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #333;
+    pointer-events: none;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+}
+
+.users-table th,
+.users-table td {
+    padding: 15px 20px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.users-table th {
+    background-color: #B8B8B8;
+    color: black;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.users-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-active {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.status-leave {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.status-enrolled {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #B8D1D1;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    color: black;
+    transition: background-color 0.3s;
+}
+
+.action-button:hover {
+    background-color: #9dbaba;
+}
+
+.action-button .material-icons {
+    font-size: 18px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.pagination span {
+    font-size: 14px;
+}
+
+.next-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.next-button:hover {
+    opacity: 0.8;
+}
+
+.nav-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+}
+
+.nav-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.nav-button:not(:disabled):hover {
+    background-color: rgba(184, 209, 209, 0.2);
+    border-radius: 4px;
+}
+
+.sort-icon {
+    font-size: 16px;
+    margin-left: 4px;
+}
+
+th {
+    cursor: pointer;
+    user-select: none;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+        margin-bottom: 60px; /* Space for mobile sidebar */
+    }
+    
+    .users-management h1 {
+        font-size: 24px;
+    }
+    
+    .action-button {
+        padding: 10px 16px;
+    }
+}
+
+.material-icons {
+    vertical-align: middle;
+    font-size: 20px;
+}
+
+/* Update table header text */
+.users-table th:nth-child(2) {
+    content: "FIRST NAME, LAST NAME";
+}
+
+.users-table th:nth-child(3) {
+    content: "EMAIL ADDRESS";
+}

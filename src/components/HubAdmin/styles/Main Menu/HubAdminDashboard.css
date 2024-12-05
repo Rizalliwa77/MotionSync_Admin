@@ -1,0 +1,184 @@
+.hub-admin-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f2efeb;
+  }
+  
+  .hub-admin-main {
+    flex: 1;
+    margin-left: 85px;
+    transition: margin-left 0.4s ease;
+    padding: 2rem;
+  }
+  
+  .sidebar:hover + .hub-admin-main {
+    margin-left: 260px;
+  }
+  
+  .dashboard-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 2rem;
+    color: #000;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+  }
+  
+  .dashboard-header h2 {
+    font-size: 1.5rem;
+    color: #999;
+    font-weight: 500;
+  }
+  
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .dashboard-card {
+    background-color: #b4cccb;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    min-height: 180px;
+    transition: transform 0.3s ease;
+  }
+  
+  .dashboard-card:hover {
+    transform: translateY(-3px);
+  }
+  
+  .dashboard-card h3 {
+    color: #fff;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  .stat-number {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: #000;
+    margin: 1rem 0;
+  }
+  
+  .card-content {
+    color: #000;
+  }
+  
+  .card-content p {
+    font-size: 1rem;
+    opacity: 0.8;
+  }
+  
+  .message-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .message-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .message-item:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .message-item .material-symbols-outlined {
+    font-size: 1.2rem;
+    color: #245b2c;
+  }
+  
+  .message-item p {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .classroom {
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  .classroom .card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 0.5rem;
+  }
+  
+  .classroom-icon {
+    font-size: 2.5rem !important;
+    color: #245b2c;
+    margin-bottom: 0.5rem;
+  }
+  
+  .classroom h3 {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 0.5rem;
+  }
+  
+  .classroom-text {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #000;
+    letter-spacing: 1px;
+  }
+  
+  @media (max-width: 1200px) {
+    .dashboard-grid {
+      gap: 1.2rem;
+      padding: 0 1rem;
+    }
+    
+    .stat-number {
+      font-size: 2.5rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .hub-admin-main {
+      margin-left: 0;
+      margin-top: 85px;
+      padding: 1rem;
+    }
+    
+    .sidebar:hover + .hub-admin-main {
+      margin-left: 0;
+    }
+    
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .dashboard-header h1 {
+      font-size: 1.8rem;
+    }
+    
+    .dashboard-header h2 {
+      font-size: 1.3rem;
+    }
+    
+    .dashboard-card {
+      min-height: 160px;
+    }
+  }

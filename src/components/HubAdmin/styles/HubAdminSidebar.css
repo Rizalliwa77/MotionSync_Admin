@@ -1,0 +1,267 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 85px;
+  display: flex;
+  overflow-x: hidden;
+  flex-direction: column;
+  background: #b4cccb;
+  padding: 25px 20px;
+  transition: width 0.4s ease;
+  --hovered-width: 260px;
+}
+
+.sidebar:hover, .sidebar.hovered {
+  width: var(--hovered-width);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  white-space: nowrap;
+}
+
+.sidebar-header img {
+  width: 42px;
+  height: 42px;
+}
+
+.sidebar-header h2 {
+  color: #000;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-left: 15px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar:hover .sidebar-header h2 {
+  opacity: 1;
+}
+
+.sidebar-links {
+  list-style: none;
+  margin-top: 10px;
+  height: calc(100% - 180px);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.sidebar-links::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar-section {
+  position: relative;
+  margin: 20px 0;
+}
+
+.sidebar-section::after {
+  content: '';
+  position: absolute;
+  left: -20px;
+  right: -20px;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  margin-top: -10px;
+}
+
+.sidebar-section:first-child::after {
+  display: none;
+}
+
+.sidebar-links li a {
+  display: flex;
+  align-items: center;
+  gap: 0 20px;
+  color: #000;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 12px 10px;
+  text-decoration: none;
+  transition: 0.2s ease;
+  border-radius: 8px;
+}
+
+.sidebar-links li a:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  color: #000;
+}
+
+.user-account {
+  margin-top: auto;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.1);
+  margin-left: -20px;
+  margin-right: -20px;
+  margin-bottom: -25px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  color: #000;
+  padding: 0 8px;
+}
+
+.user-profile img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.user-detail {
+  margin-left: 15px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar:hover .user-detail {
+  opacity: 1;
+}
+
+.user-profile h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000;
+}
+
+.user-profile span {
+  font-size: 0.775rem;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Section headers when sidebar is hovered */
+.sidebar:hover .sidebar-section span {
+  display: inline-block;
+  padding: 0 10px;
+  background: #b4cccb;
+  position: relative;
+  z-index: 1;
+}
+
+/* Hide text when not hovered */
+.sidebar:not(:hover) .sidebar-section span,
+.sidebar:not(:hover) a span:not(.material-symbols-outlined) {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: fixed;
+    bottom: 0;
+    top: auto;
+  }
+}
+
+.menu-separator {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.3);
+  margin: 15px -20px;
+}
+
+.sidebar-section h4 {
+  text-align: center;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.section-header {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.section-header h4 {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #000;
+  margin: 0;
+}
+
+/* Remove the hover condition for section headers */
+.sidebar .section-header h4 {
+  display: block !important;
+}
+
+/* Hide text when not hovered except for section headers */
+.sidebar:not(:hover) a span:not(.material-symbols-outlined) {
+  display: none;
+}
+
+.logout-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.logout-modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.logout-modal-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.logout-modal-buttons button {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.logout-modal-buttons button:first-child {
+  background: #FF6B6B;
+  color: white;
+}
+
+.logout-modal-buttons button:last-child {
+  background: #b4cccb;
+  color: black;
+}
+
+.section-header h4 {
+  text-align: center;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #000;
+}
+
+.sidebar:not(:hover) .section-header h4 {
+  display: none;
+}
+
+.sidebar:not(:hover) .section-header:first-child h4 {
+  display: block;
+}

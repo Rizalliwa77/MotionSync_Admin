@@ -1,0 +1,354 @@
+.hub-admin-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+
+.main-content {
+    flex: 1;
+    padding: 30px;
+    margin-left: 85px; /* Match sidebar width */
+    transition: margin-left 0.4s ease;
+}
+
+.sidebar:hover ~ .main-content {
+    margin-left: 260px; /* Match sidebar hover width */
+}
+
+.users-management {
+    margin-bottom: 30px;
+}
+
+.users-management h1 {
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: #333;
+    text-align: center;
+}
+
+.search-container {
+    position: relative;
+    margin-bottom: 20px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 12px 40px 12px 12px;
+    background-color: #B8D1D1;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.search-bar:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(184, 209, 209, 0.5);
+}
+
+.search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #333;
+    pointer-events: none;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+}
+
+.users-table th,
+.users-table td {
+    padding: 15px 20px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.users-table th {
+    background-color: #B8B8B8;
+    color: black;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.users-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.status {
+    padding: 0;
+    border-radius: 0;
+    font-weight: normal;
+}
+
+.status.active {
+    color: #00A67E;
+}
+
+.status.inactive {
+    color: #FF6B6B;
+}
+
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #B8D1D1;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    color: black;
+    transition: background-color 0.3s;
+}
+
+.action-button:hover {
+    background-color: #9dbaba;
+}
+
+.action-button .material-icons {
+    font-size: 18px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.pagination span {
+    font-size: 14px;
+}
+
+.next-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.next-button:hover {
+    opacity: 0.8;
+}
+
+.nav-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+}
+
+.nav-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.nav-button:not(:disabled):hover {
+    background-color: rgba(184, 209, 209, 0.2);
+    border-radius: 4px;
+}
+
+.sort-icon {
+    font-size: 16px;
+    margin-left: 4px;
+}
+
+th {
+    cursor: pointer;
+    user-select: none;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+        margin-bottom: 60px; /* Space for mobile sidebar */
+    }
+    
+    .users-management h1 {
+        font-size: 24px;
+    }
+    
+    .action-button {
+        padding: 10px 16px;
+    }
+}
+
+.material-icons {
+    vertical-align: middle;
+    font-size: 20px;
+}
+
+/* Applications Section Styles */
+.applications-section {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.applications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.toggle-applications-btn {
+    padding: 0.5rem 1rem;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.toggle-applications-btn:hover {
+    background-color: #34495e;
+}
+
+.applications-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.applications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.application-card {
+    padding: 1rem;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.application-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.application-card.selected {
+    border: 2px solid #2c3e50;
+    background-color: #f1f5f9;
+}
+
+.application-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.application-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1f2937;
+}
+
+.status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status.pending {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.status.approved {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.status.rejected {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.application-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.application-details p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+.application-details-panel {
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.detail-group {
+    margin-bottom: 1.5rem;
+}
+
+.detail-group label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.document-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #2c3e50;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.document-link:hover {
+    background-color: #34495e;
+}
