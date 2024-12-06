@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { getAuth, signOut } from 'firebase/auth';
 import '../assets/Sidebar.css';
 import logo from '../assets/media/logo.png';
 import profile from '../assets/media/profilepic.jpg';
@@ -9,15 +10,27 @@ const Sidebar = ({ onHoverChange }) => {
   const [contentDropdownOpen, setContentDropdownOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
+  const auth = getAuth();
 
-  const handleLogoutClick = () => {
+  const handleLogoutClick = (e) => {
+    e.preventDefault();
     setShowLogoutConfirmation(true);
   };
 
-  const handleLogoutConfirm = () => {
-    // Implement logout logic here (e.g., clear session, tokens, etc.)
-    setShowLogoutConfirmation(false);
-    navigate('/');
+  const handleLogoutConfirm = async () => {
+    try {
+      await signOut(auth);
+      
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      setShowLogoutConfirmation(false);
+      
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Error signing out:', error);
+      alert('Failed to log out. Please try again.');
+    }
   };
 
   const handleLogoutCancel = () => {
@@ -103,7 +116,10 @@ const Sidebar = ({ onHoverChange }) => {
             <Link to="/settings"><span className="material-symbols-outlined">settings</span>Settings</Link>
           </li>
           <li>
-            <a href="#" onClick={handleLogoutClick}><span className="material-symbols-outlined">logout</span>Logout</a>
+            <a href="#" onClick={handleLogoutClick}>
+              <span className="material-symbols-outlined">logout</span>
+              Logout
+            </a>
           </li>
         </ul>
         <div className="user-account">
