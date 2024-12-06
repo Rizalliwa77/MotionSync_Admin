@@ -1,10 +1,51 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { doc, getDoc, setDoc, collection } from "firebase/firestore";
+import { db } from "../firebase/firebaseConfig";
 import "./registrationFive.css";
 import MotionSyncLogo from "../assets/media/motionsync.png";
 
 const RegistrationFive = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    replicateHubData();
+  }, []);
+
+  const replicateHubData = async () => {
+    try {
+      // Get data from register collection (Form 1)
+      const registerRef = doc(db, "register", "Form 1");
+      const registerDoc = await getDoc(registerRef);
+      
+      // Get data from HubAddress Info collection
+      const addressRef = doc(db, "HubAddress Info", "Form 1");
+      const addressDoc = await getDoc(addressRef);
+
+      if (registerDoc.exists() && addressDoc.exists()) {
+        const registerData = registerDoc.data();
+        const addressData = addressDoc.data();
+
+        // Create the combined address
+        const combinedAddress = `${addressData.street}, ${addressData.city}`;
+
+        // Create new document in schools collection
+        const schoolsRef = doc(collection(db, "schools"));
+        await setDoc(schoolsRef, {
+          schoolName: registerData.hubName,
+          schoolId: registerData.hubToken,
+          schoolAddress: combinedAddress,
+          schoolImage: "" // You can add image handling logic here if needed
+        });
+
+        console.log("Data successfully replicated to schools collection");
+      } else {
+        console.error("Required documents not found");
+      }
+    } catch (error) {
+      console.error("Error replicating data:", error);
+    }
+  };
 
   return (
     <div className="completion-container">

@@ -290,9 +290,63 @@ body {
   background-color: white;
   padding: 2rem;
   border-radius: 8px;
-  width: 90%;
   max-width: 800px;
-  max-height: 80vh;
+  width: 90%;
+  max-height: 90vh;
   overflow-y: auto;
+}
+
+.details-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.details-section h3 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.details-section h4 {
+  color: #666;
+  margin: 1rem 0;
+}
+
+.program-details,
+.educator-details,
+.credential-details {
+  background-color: #f9f9f9;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: flex-end;
+}
+
+.modal-actions button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.close-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.approve-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.deny-btn {
+  background-color: #dc3545;
+  color: white;
 }
 
