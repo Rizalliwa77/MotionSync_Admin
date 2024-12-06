@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { doc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db } from "../../firebase/firebaseConfig";
-import "../../components/HubAdmin/styles/Registration/registrationFour.css";
-import MotionSyncLogo from "../../assets/media/motionsync.png";
+import { db } from "../firebase/firebaseConfig";
+import "./registrationFour.css";
+import MotionSyncLogo from "../assets/media/motionsync.png";
 import { FaCreditCard, FaMobile, FaUniversity } from 'react-icons/fa';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
-import StripePayment from '../../components/Payment/StripePayment';
+import StripePayment from '../components/Payment/StripePayment';
 
 // Make sure this is outside the component
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);

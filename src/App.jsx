@@ -12,12 +12,12 @@ import UserContent from './components/General/userContent';
 import HubContent from './components/General/hubContent';
 import Analytics from './components/General/Analytics';
 import Notifications from './components/General/Notifications';
-import PageOne from './components/Registration/pageOne';
-import RegistrationOne from './components/Registration/registrationOne';
-import RegistrationTwo from './components/Registration/registrationTwo';
-import RegistrationThree from './components/Registration/registrationThree';
-import RegistrationFour from './components/Registration/registrationFour';
-import RegistrationFive from './components/Registration/registrationFive';
+import PageOne from './Registration/pageOne';
+import RegistrationOne from './Registration/registrationOne';
+import RegistrationTwo from './Registration/registrationTwo';
+import RegistrationThree from './Registration/registrationThree';
+import RegistrationFour from './Registration/registrationFour';
+import RegistrationFive from './Registration/registrationFive';
 // Updated imports for Hub Admin components
 import HubAdminDashboard from './components/HubAdmin/jsx/Main Menu/HubAdminDashboard';
 import HubAdmin_StudentList from './components/HubAdmin/jsx/Main Menu/HubAdmin_StudentList';
@@ -60,6 +60,12 @@ const App = () => {
         <Route path="/hub-admin/profile" element={<HubAdmin_Profile />} />
         <Route path="/hub-admin/messages" element={<HubAdmin_Messages />} />
         <Route path="/hub-admin/classroom" element={<HubAdmin_Classroom />} />
+        <Route path="/hub-admin/registration" element={<PageOne />} />
+        <Route path="/hub-admin/registration/step-1" element={<RegistrationOne />} />
+        <Route path="/hub-admin/registration/step-2" element={<RegistrationTwo />} />
+        <Route path="/hub-admin/registration/step-3" element={<RegistrationThree />} />
+        <Route path="/hub-admin/registration/step-4" element={<RegistrationFour />} />
+        <Route path="/hub-admin/registration/complete" element={<RegistrationFive />} />
       </Routes>
     </Router>
   );

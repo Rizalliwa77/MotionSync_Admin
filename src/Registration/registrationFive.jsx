@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../components/HubAdmin/styles/Registration/registrationFive.css';
+import "./registrationFive.css";
+import MotionSyncLogo from "../assets/media/motionsync.png";
 
 const RegistrationFive = () => {
   const navigate = useNavigate();

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { doc, setDoc, collection } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db } from "../../firebase/firebaseConfig";
-import "../../components/HubAdmin/styles/Registration/registrationThree.css";
-import MotionSyncLogo from "../../assets/media/motionsync.png";
+import { db } from "../firebase/firebaseConfig";
+import "./registrationThree.css";
+import MotionSyncLogo from "../assets/media/motionsync.png";
 import { useNavigate } from 'react-router-dom';
 
 const RegistrationThree = () => {

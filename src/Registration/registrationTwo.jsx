@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { getFirestore, doc, setDoc, collection } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../firebase/firebaseConfig";
-import "../../components/HubAdmin/styles/Registration/registrationTwo.css";
-import MotionSyncLogo from "../../assets/media/motionsync.png";
+import "./registrationTwo.css";
+import MotionSyncLogo from "../assets/media/motionsync.png";
 import { useNavigate } from 'react-router-dom';
 
 const RegistrationTwo = () => {

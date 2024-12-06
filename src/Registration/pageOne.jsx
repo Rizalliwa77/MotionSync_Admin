@@ -1,13 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "../../assets/Registration/pageOne.css";
-import phoneImage from "../../assets/media/phone.png";
+import "./pageOne.css";
+import phoneImage from "../assets/media/phone.png";
 
 const PageOne = () => {
   const navigate = useNavigate();
 
   const handleRegisterClick = () => {
-    navigate('/registration-one');
+    navigate('/hub-admin/registration/step-1');
   };
 
   return (
