@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../assets/Registration/registrationFive.css';
+import '../../components/HubAdmin/styles/Registration/registrationFive.css';
 
 const RegistrationFive = () => {
   const navigate = useNavigate();

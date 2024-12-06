@@ -173,7 +173,7 @@ h1 {
   min-height: 100vh;
   padding: 2rem;
   background-color: #f8f9fa;
-  background-image: url('../../assets/media/sign-language-pattern.png');
+  background-image: url('../media/sign-language-pattern.png');
   background-size: cover;
   display: flex;
   justify-content: center;

@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../../assets/Registration/pageOne.css";
 import phoneImage from "../../assets/media/phone.png";
-import motionSyncLogo from "../../assets/media/motionsync.png";
 
 const PageOne = () => {
   const navigate = useNavigate();

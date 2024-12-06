@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { doc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db } from "../../firebase/firebaseConfig";
-import "../../assets/Registration/registrationFour.css";
+import "../../components/HubAdmin/styles/Registration/registrationFour.css";
 import MotionSyncLogo from "../../assets/media/motionsync.png";
 import { FaCreditCard, FaMobile, FaUniversity } from 'react-icons/fa';
 import { loadStripe } from '@stripe/stripe-js';

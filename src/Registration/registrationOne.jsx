@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { doc, setDoc, collection } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig.js";
-import "../../assets/Registration/registrationOne.css";
+import "../../components/HubAdmin/styles/Registration/registrationOne.css";
 import MotionSyncLogo from "../../assets/media/motionsync.png";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate } from 'react-router-dom';
