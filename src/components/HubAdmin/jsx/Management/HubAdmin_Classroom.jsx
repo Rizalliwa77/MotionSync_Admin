@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getFirestore, doc, setDoc, collection, getDocs, deleteDoc, updateDoc, addDoc } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, collection, getDocs, deleteDoc, updateDoc, addDoc, writeBatch } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { db } from "../../../../firebase/firebaseConfig";
 import HubAdminSidebar from '../HubAdminSidebar';
@@ -13,6 +13,8 @@ const generateStaticId = () => {
 
 // Initialize Firebase Storage
 const storage = getStorage();
+
+const SCHOOL_ID = '7kJvkewDYT1hTRKieGcQ';
 
 const HubAdmin_Classroom = () => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -34,8 +36,6 @@ const HubAdmin_Classroom = () => {
   let currentStudentId = 110;
   const [showDocumentModal, setShowDocumentModal] = useState(false);
   const [currentDocument, setCurrentDocument] = useState(null);
-
-  const SCHOOL_ID = '7kJvkewDYT1hTRKieGcQ'; // Your school ID
 
   // Fetch courses from Firebase
   useEffect(() => {
@@ -178,14 +178,14 @@ const HubAdmin_Classroom = () => {
     try {
       if (modalType === 'teacher') {
         const teacherData = {
-          teacherId: generateStaticId(), // Use static ID generator
-          teacherFName: formData.firstName.trim(),
-          teacherMName: formData.middleInitial ? formData.middleInitial.trim() : '',
-          teacherLName: formData.lastName.trim(),
-          teacherEmail: formData.email.trim(),
-          teacherGender: formData.gender,
-          specialization: formData.specialization.trim(),
-          yearsTeaching: formData.yearsOfTeaching.toString(),
+          teacherId: generateStaticId(),
+          teacherFName: String(formData.firstName || '').trim(),
+          teacherMName: String(formData.middleInitial || '').trim(),
+          teacherLName: String(formData.lastName || '').trim(),
+          teacherEmail: String(formData.email || '').trim(),
+          teacherGender: String(formData.gender || ''),
+          specialization: String(formData.specialization || '').trim(),
+          yearsTeaching: String(formData.yearsOfTeaching || ''),
         };
 
         const teachersRef = collection(db, `schools/7kJvkewDYT1hTRKieGcQ/teacher`);
@@ -198,16 +198,18 @@ const HubAdmin_Classroom = () => {
 
       } else if (modalType === 'subject') {
         const subjectData = {
-          courseId: generateStaticId(), // Use static ID generator
-          courseName: formData.courseName.trim(),
-          edpCode: formData.edpCode.trim(),
-          courseDescription: formData.courseDescription.trim(),
-          teacherEmail: formData.teacherEmail.trim(),
-          year: formData.year.toString(),
+          courseId: generateStaticId(),
+          courseName: String(formData.courseName || '').trim(),
+          edpCode: String(formData.edpCode || '').trim(),
+          courseDescription: String(formData.courseDescription || '').trim(),
+          teacherId: String(formData.teacherId || ''),
+          teacherEmail: String(formData.teacherEmail || '').trim(),
+          teacherName: String(formData.teacherName || ''),
+          year: String(formData.year || ''),
           enrolledStudentsEmail: formData.enrolledStudentsEmail || []
         };
 
-        const subjectsRef = collection(db, `schools/7kJvkewDYT1hTRKieGcQ/courses`);
+        const subjectsRef = collection(db, `schools/${SCHOOL_ID}/courses`);
         const docRef = await addDoc(subjectsRef, subjectData);
         
         setCourses(prevCourses => [
@@ -279,23 +281,52 @@ const HubAdmin_Classroom = () => {
         
         // Create new student data
         const studentData = {
-          studentId: `#${currentStudentId++}`, // Static ID starting from #110
+          studentId: `#${currentStudentId++}`,
           firstName: application.firstName,
           lastName: application.lastName,
           email: application.email,
-          status: getRandomStatus(), // Random status: 'Active', 'On Leave', or 'Enrolled'
+          status: getRandomStatus(),
           timestamp: new Date().toISOString(),
-          // You can add more fields as needed
         };
 
-        // Add to students collection in Firebase
+        // Add to students collection
         const studentsRef = collection(db, `schools/${SCHOOL_ID}/students`);
         await addDoc(studentsRef, studentData);
+
+        // Update all courses to include this student's email
+        const coursesRef = collection(db, `schools/${SCHOOL_ID}/courses`);
+        const coursesSnapshot = await getDocs(coursesRef);
+        
+        // Batch update for better performance
+        const batch = writeBatch(db);
+        
+        coursesSnapshot.docs.forEach(courseDoc => {
+          const courseRef = doc(db, `schools/${SCHOOL_ID}/courses`, courseDoc.id);
+          const currentEmails = courseDoc.data().enrolledStudentsEmail || [];
+          
+          // Only add email if it's not already in the array
+          if (!currentEmails.includes(application.email)) {
+            batch.update(courseRef, {
+              enrolledStudentsEmail: [...currentEmails, application.email]
+            });
+          }
+        });
+
+        // Commit the batch update
+        await batch.commit();
 
         // Update local state
         setApplications(applications.map(app => 
           app.id === applicationId ? { ...app, status: newStatus } : app
         ));
+
+        // Update courses state to reflect new enrollment
+        setCourses(courses.map(course => ({
+          ...course,
+          enrolledStudentsEmail: course.enrolledStudentsEmail 
+            ? [...course.enrolledStudentsEmail, application.email]
+            : [application.email]
+        })));
 
         alert('Application approved and student added successfully');
       } else {
@@ -406,51 +437,85 @@ const HubAdmin_Classroom = () => {
             <div className="container-header">
               <h2>Subjects</h2>
               <button className="primary-button" onClick={() => handleAdd('subject')}>
-                <span className="material-symbols-outlined">add</span>
                 Add New Subject
               </button>
             </div>
             <div className="subjects-grid">
-              {courses.map((course) => (
-                <div key={course.id} className="subject-card">
-                  <div className="subject-header">
-                    <h3>{course.courseName}</h3>
-                    <span className="course-id">{course.courseId}</span>
-                  </div>
-                  <div className="subject-details">
-                    <p className="edp-code">{course.edpCode}</p>
-                    <p className="description">{course.courseDescription}</p>
-                    <div className="stats">
-                      <div className="stat">
-                        <span className="material-symbols-outlined">person</span>
-                        <p>Teacher: {course.teacherEmail}</p>
+              {courses.map((course) => {
+                // Find the teacher details
+                const teacher = teachers.find(t => t.teacherEmail === course.teacherEmail);
+                
+                // Find enrolled students
+                const enrolledStudents = students.filter(student => 
+                  course.enrolledStudentsEmail?.includes(student.email)
+                );
+
+                return (
+                  <div key={course.id} className="subject-card">
+                    <div className="subject-header">
+                      <h3>{course.courseName}</h3>
+                      <span className="course-id">{course.courseId}</span>
+                    </div>
+                    <div className="subject-details">
+                      <p className="edp-code">{course.edpCode}</p>
+                      <p className="description">{course.courseDescription}</p>
+                      
+                      {/* Teacher Section */}
+                      <div className="teacher-info">
+                        <h4>Teacher</h4>
+                        {teacher ? (
+                          <div className="teacher-detail">
+                            <span className="material-symbols-outlined">person</span>
+                            <p>{`${teacher.teacherFName} ${teacher.teacherLName}`}</p>
+                            <p className="teacher-email">{teacher.teacherEmail}</p>
+                          </div>
+                        ) : (
+                          <p className="no-teacher">No teacher assigned</p>
+                        )}
                       </div>
-                      <div className="stat">
-                        <span className="material-symbols-outlined">group</span>
-                        <p>{course.enrolledStudentsEmail?.length || 0} Students</p>
+
+                      {/* Students Section */}
+                      <div className="students-info">
+                        <h4>Enrolled Students ({enrolledStudents.length})</h4>
+                        <div className="students-list">
+                          {enrolledStudents.length > 0 ? (
+                            enrolledStudents.map(student => (
+                              <div key={student.id} className="student-detail">
+                                <span className="material-symbols-outlined">school</span>
+                                <p>{`${student.firstName} ${student.lastName}`}</p>
+                                <p className="student-email">{student.email}</p>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="no-students">No students enrolled</p>
+                          )}
+                        </div>
                       </div>
-                      <div className="stat">
-                        <span className="material-symbols-outlined">calendar_today</span>
-                        <p>Year: {course.year}</p>
+
+                      <div className="stats">
+                        <div className="stat">
+                          <span className="material-symbols-outlined">calendar_today</span>
+                          <p>Year: {course.year}</p>
+                        </div>
                       </div>
                     </div>
+                    <div className="card-actions">
+                      <button 
+                        className="icon-button edit"
+                        onClick={() => handleEdit(course, 'subject')}
+                      >
+                        <span className="material-symbols-outlined">edit</span>
+                      </button>
+                      <button 
+                        className="icon-button delete"
+                        onClick={() => handleDelete(course, 'subject')}
+                      >
+                        <span className="material-symbols-outlined">delete</span>
+                      </button>
+                    </div>
                   </div>
-                  <div className="card-actions">
-                    <button 
-                      className="icon-button edit"
-                      onClick={() => handleEdit(course, 'subject')}
-                    >
-                      <span className="material-symbols-outlined">edit</span>
-                    </button>
-                    <button 
-                      className="icon-button delete"
-                      onClick={() => handleDelete(course, 'subject')}
-                    >
-                      <span className="material-symbols-outlined">delete</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         );
@@ -460,11 +525,11 @@ const HubAdmin_Classroom = () => {
           <div className="teachers-container">
             <div className="container-header">
               <h2>Teachers</h2>
-              <button className="primary-button" onClick={() => handleAdd('teacher')}>
-                <span className="material-symbols-outlined">add</span>
+              <button className="primary-button" onClick={handleAddNewTeacher}>
                 Add New Teacher
               </button>
             </div>
+            
             <div className="teachers-grid">
               {teachers.map((teacher) => (
                 <div key={teacher.id} className="teacher-card">
@@ -486,16 +551,10 @@ const HubAdmin_Classroom = () => {
                     </div>
                   </div>
                   <div className="card-actions">
-                    <button 
-                      className="icon-button edit"
-                      onClick={() => handleEdit(teacher, 'teacher')}
-                    >
+                    <button className="icon-button edit" onClick={() => handleEdit(teacher, 'teacher')}>
                       <span className="material-symbols-outlined">edit</span>
                     </button>
-                    <button 
-                      className="icon-button delete"
-                      onClick={() => handleDelete(teacher, 'teacher')}
-                    >
+                    <button className="icon-button delete" onClick={() => handleDelete(teacher, 'teacher')}>
                       <span className="material-symbols-outlined">delete</span>
                     </button>
                   </div>
@@ -731,6 +790,8 @@ const HubAdmin_Classroom = () => {
           onClose={() => setShowModal(false)}
           onSave={handleSave}
           modalType={modalType}
+          teachers={teachers}
+          students={students}
         />
       )}
 
@@ -772,398 +833,358 @@ const HubAdmin_Classroom = () => {
   );
 };
 
-const CourseModal = ({ data, onClose, onSave, modalType }) => {
+const CourseModal = ({ data, onClose, onSave, modalType, teachers, students }) => {
   const initialTeacherData = {
-    teacherId: '',
-    firstName: '',
-    middleInitial: '',
-    lastName: '',
-    email: '',
-    gender: '',
+    teacherId: generateStaticId(),
+    teacherFName: '',
+    teacherLName: '',
+    teacherMName: '',
+    teacherEmail: '',
     specialization: '',
-    yearsOfTeaching: '',
+    yearsTeaching: '',
+    timestamp: new Date().toISOString()
   };
 
   const initialSubjectData = {
-    courseId: '',
+    courseId: generateStaticId(),
     courseName: '',
     edpCode: '',
     courseDescription: '',
     teacherEmail: '',
-    year: new Date().getFullYear().toString(),
-    enrolledStudentsEmail: []
-  };
-
-  const initialStudentData = {
-    email: '',
-    firstName: '',
-    lastName: '',
-    phone: '',
-    userId: '',
+    teacherName: '',
+    year: new Date().getFullYear(),
+    enrolledStudentsEmail: [],
+    timestamp: new Date().toISOString()
   };
 
   const [formData, setFormData] = useState(
-    data || (modalType === 'teacher' ? initialTeacherData : modalType === 'subject' ? initialSubjectData : initialStudentData)
+    modalType === 'teacher' ? (data || initialTeacherData) : (data || initialSubjectData)
   );
-  const [errors, setErrors] = useState({});
 
-  const validateField = (name, value) => {
-    switch (name) {
-      // Teacher validations
-      case 'teacherId':
-        return value.trim() ? '' : 'Teacher ID is required';
-      case 'firstName':
-        return value.trim() ? '' : 'First name is required';
-      case 'lastName':
-        return value.trim() ? '' : 'Last name is required';
-      case 'email':
-        return value.includes('@') ? '' : 'Valid email is required';
-      case 'gender':
-        return value ? '' : 'Gender is required';
-      case 'specialization':
-        return value.trim() ? '' : 'Specialization is required';
-      case 'yearsOfTeaching':
-        return !isNaN(value) && value >= 0 ? '' : 'Valid years of teaching required';
-      
-      // Subject validations
-      case 'courseId':
-        return value.trim() ? '' : 'Course ID is required';
-      case 'courseName':
-        return value.trim() ? '' : 'Course name is required';
-      case 'edpCode':
-        return value.trim() ? '' : 'EDP code is required';
-      case 'courseDescription':
-        return value.trim() ? '' : 'Course description is required';
-      case 'teacherEmail':
-        return value.includes('@') ? '' : 'Valid teacher email is required';
-      case 'year':
-        return !isNaN(value) && value >= 0 ? '' : 'Valid year is required';
-      
-      // Student validations
-      case 'email':
-        return value.includes('@') ? '' : 'Valid email is required';
-      case 'phone':
-        return value.length === 10 ? '' : 'Valid phone number is required';
-      case 'userId':
-        return value.trim() ? '' : 'Student ID is required';
-      default:
-        return '';
-    }
-  };
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
+    if (name === 'teacherEmail') {
+      const selectedTeacher = teachers.find(teacher => teacher.teacherEmail === value);
+      setFormData(prev => ({
+        ...prev,
+        teacherEmail: value,
+        teacherName: selectedTeacher ? 
+          `${selectedTeacher.teacherFName} ${selectedTeacher.teacherLName}` : ''
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleStudentSelection = (e) => {
+    const selectedEmails = Array.from(e.target.selectedOptions).map(option => option.value);
+    
+    // Only take the first selected email
+    const email = selectedEmails[0];
+    
+    setFormData(prev => ({
+      ...prev,
+      enrolledStudentsEmail: email ? [email] : []
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (modalType === 'teacher') {
+      if (!formData.teacherFName?.trim()) newErrors.teacherFName = 'First name is required';
+      if (!formData.teacherLName?.trim()) newErrors.teacherLName = 'Last name is required';
+      if (!formData.teacherEmail?.trim()) newErrors.teacherEmail = 'Email is required';
+      if (!formData.specialization?.trim()) newErrors.specialization = 'Specialization is required';
+      if (!formData.yearsTeaching?.toString().trim()) newErrors.yearsTeaching = 'Years teaching is required';
+      
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (formData.teacherEmail && !emailRegex.test(formData.teacherEmail.trim())) {
+        newErrors.teacherEmail = 'Invalid email format';
+      }
+    } else {
+      if (!formData.courseName?.trim()) newErrors.courseName = 'Course name is required';
+      if (!formData.edpCode?.trim()) newErrors.edpCode = 'EDP code is required';
+      if (!formData.courseDescription?.trim()) newErrors.courseDescription = 'Description is required';
+      if (!formData.teacherEmail?.trim()) newErrors.teacherEmail = 'Teacher email is required';
+      
+      // Validate enrolled students
+      if (formData.enrolledStudentsEmail?.length > 1) {
+        newErrors.enrolledStudentsEmail = 'Only one student can be enrolled';
+      }
+
+      // Check for duplicate email
+      const existingCourse = courses.find(course => 
+        course.id !== formData.id && // Exclude current course when editing
+        course.enrolledStudentsEmail?.includes(formData.enrolledStudentsEmail?.[0])
+      );
+      
+      if (existingCourse) {
+        newErrors.enrolledStudentsEmail = 'This student is already enrolled in another course';
+      }
+    }
+
+    return newErrors;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate all fields before submission
-    const newErrors = {};
-    Object.keys(formData).forEach(key => {
-      const error = validateField(key, formData[key]);
-      if (error) newErrors[key] = error;
-    });
-
+    const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    onSave(formData);
+    try {
+      if (modalType === 'teacher') {
+        const teacherData = {
+          ...formData,
+          yearsTeaching: parseInt(formData.yearsTeaching)
+        };
+        
+        if (data?.id) {
+          const teacherRef = doc(db, `schools/${SCHOOL_ID}/teacher`, data.id);
+          await updateDoc(teacherRef, teacherData);
+        } else {
+          const teachersRef = collection(db, `schools/${SCHOOL_ID}/teacher`);
+          await addDoc(teachersRef, teacherData);
+        }
+      } else {
+        const subjectData = {
+          ...formData,
+          year: parseInt(formData.year)
+        };
+        
+        if (data?.id) {
+          const subjectRef = doc(db, `schools/${SCHOOL_ID}/courses`, data.id);
+          await updateDoc(subjectRef, subjectData);
+        } else {
+          const subjectsRef = collection(db, `schools/${SCHOOL_ID}/courses`);
+          await addDoc(subjectsRef, subjectData);
+        }
+      }
+      
+      onSave(formData);
+      onClose();
+    } catch (error) {
+      console.error('Error saving:', error);
+      alert('Error saving. Please try again.');
+    }
   };
 
   return (
     <div className="modal">
       <div className="modal-content">
         <div className="modal-header">
-          <h2>{data ? `Edit ${modalType}` : `Add New ${modalType}`}</h2>
+          <h2>{data ? `Edit ${modalType === 'teacher' ? 'Teacher' : 'Subject'}` : `Add New ${modalType === 'teacher' ? 'Teacher' : 'Subject'}`}</h2>
           <button className="close-button" onClick={onClose}>
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-layout">
-            {modalType === 'teacher' ? (
-              <>
-                <div className="form-section">
-                  <h3>Personal Information</h3>
-                  <div className="form-group">
-                    <label>Teacher ID*</label>
-                    <input
-                      type="text"
-                      name="teacherId"
-                      value={formData.teacherId}
-                      onChange={handleChange}
-                      placeholder="Enter teacher ID"
-                      required
-                    />
-                    {errors.teacherId && <span className="error">{errors.teacherId}</span>}
-                  </div>
+        <form onSubmit={handleSubmit} className={`form-layout ${modalType}-form`}>
+          {modalType === 'teacher' ? (
+            <>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>First Name*</label>
+                  <input
+                    type="text"
+                    name="teacherFName"
+                    value={formData.teacherFName}
+                    onChange={handleChange}
+                    className={errors.teacherFName ? 'error' : ''}
+                  />
+                  {errors.teacherFName && <span className="error">{errors.teacherFName}</span>}
+                </div>
 
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>First Name*</label>
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        placeholder="Enter first name"
-                        required
-                      />
-                      {errors.firstName && <span className="error">{errors.firstName}</span>}
-                    </div>
+                <div className="form-group middle-initial">
+                  <label>M.I.</label>
+                  <input
+                    type="text"
+                    name="teacherMName"
+                    value={formData.teacherMName}
+                    onChange={handleChange}
+                    maxLength="1"
+                  />
+                </div>
 
-                    <div className="form-group middle-initial">
-                      <label>M.I.</label>
-                      <input
-                        type="text"
-                        name="middleInitial"
-                        value={formData.middleInitial}
-                        onChange={handleChange}
-                        placeholder="M.I."
-                        maxLength="1"
-                      />
-                    </div>
+                <div className="form-group">
+                  <label>Last Name*</label>
+                  <input
+                    type="text"
+                    name="teacherLName"
+                    value={formData.teacherLName}
+                    onChange={handleChange}
+                    className={errors.teacherLName ? 'error' : ''}
+                  />
+                  {errors.teacherLName && <span className="error">{errors.teacherLName}</span>}
+                </div>
+              </div>
 
-                    <div className="form-group">
-                      <label>Last Name*</label>
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        placeholder="Enter last name"
-                        required
-                      />
-                      {errors.lastName && <span className="error">{errors.lastName}</span>}
-                    </div>
-                  </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Email*</label>
+                  <input
+                    type="email"
+                    name="teacherEmail"
+                    value={formData.teacherEmail}
+                    onChange={handleChange}
+                    className={errors.teacherEmail ? 'error' : ''}
+                  />
+                  {errors.teacherEmail && <span className="error">{errors.teacherEmail}</span>}
+                </div>
+              </div>
 
-                  <div className="form-group">
-                    <label>Gender*</label>
-                    <select
-                      name="gender"
-                      value={formData.gender}
-                      onChange={handleChange}
-                      required
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Specialization*</label>
+                  <input
+                    type="text"
+                    name="specialization"
+                    value={formData.specialization}
+                    onChange={handleChange}
+                    className={errors.specialization ? 'error' : ''}
+                  />
+                  {errors.specialization && <span className="error">{errors.specialization}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label>Years Teaching*</label>
+                  <input
+                    type="number"
+                    name="yearsTeaching"
+                    value={formData.yearsTeaching}
+                    onChange={handleChange}
+                    min="0"
+                    className={errors.yearsTeaching ? 'error' : ''}
+                  />
+                  {errors.yearsTeaching && <span className="error">{errors.yearsTeaching}</span>}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Course Name*</label>
+                  <input
+                    type="text"
+                    name="courseName"
+                    value={formData.courseName}
+                    onChange={handleChange}
+                    className={errors.courseName ? 'error' : ''}
+                    placeholder="Enter course name"
+                  />
+                  {errors.courseName && <span className="error">{errors.courseName}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label>EDP Code*</label>
+                  <input
+                    type="text"
+                    name="edpCode"
+                    value={formData.edpCode}
+                    onChange={handleChange}
+                    className={errors.edpCode ? 'error' : ''}
+                    placeholder="Enter EDP code"
+                  />
+                  {errors.edpCode && <span className="error">{errors.edpCode}</span>}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Description*</label>
+                <textarea
+                  name="courseDescription"
+                  value={formData.courseDescription}
+                  onChange={handleChange}
+                  className={errors.courseDescription ? 'error' : ''}
+                  rows="3"
+                  placeholder="Enter course description"
+                />
+                {errors.courseDescription && <span className="error">{errors.courseDescription}</span>}
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Assign Teacher*</label>
+                  <select
+                    name="teacherEmail"
+                    value={formData.teacherEmail}
+                    onChange={handleChange}
+                    className={`form-select ${errors.teacherEmail ? 'error' : ''}`}
+                  >
+                    <option value="">Select a teacher</option>
+                    {teachers.map(teacher => (
+                      <option 
+                        key={teacher.id} 
+                        value={teacher.teacherEmail}
+                      >
+                        {teacher.teacherEmail}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.teacherEmail && <span className="error">{errors.teacherEmail}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label>Year</label>
+                  <input
+                    type="number"
+                    name="year"
+                    value={formData.year}
+                    onChange={handleChange}
+                    min={new Date().getFullYear()}
+                    className="form-input"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Enrolled Student</label>
+                <select
+                  name="enrolledStudentsEmail"
+                  value={formData.enrolledStudentsEmail || []}
+                  onChange={handleStudentSelection}
+                  className={`form-select ${errors.enrolledStudentsEmail ? 'error' : ''}`}
+                >
+                  <option value="">Select a student</option>
+                  {students.map(student => (
+                    <option 
+                      key={student.id} 
+                      value={student.email}
                     >
-                      <option value="">Select gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                    </select>
-                    {errors.gender && <span className="error">{errors.gender}</span>}
+                      {student.email}
+                    </option>
+                  ))}
+                </select>
+                {errors.enrolledStudentsEmail && (
+                  <span className="error">{errors.enrolledStudentsEmail}</span>
+                )}
+                {formData.enrolledStudentsEmail?.length > 0 && (
+                  <div className="selected-count">
+                    Selected student: {formData.enrolledStudentsEmail[0]}
                   </div>
-
-                  <div className="form-group">
-                    <label>Email*</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="Enter email address"
-                      required
-                    />
-                    {errors.email && <span className="error">{errors.email}</span>}
-                  </div>
-                </div>
-
-                <div className="form-section">
-                  <h3>Professional Information</h3>
-                  <div className="form-group">
-                    <label>Specialization*</label>
-                    <input
-                      type="text"
-                      name="specialization"
-                      value={formData.specialization}
-                      onChange={handleChange}
-                      placeholder="Enter specialization"
-                      required
-                    />
-                    {errors.specialization && <span className="error">{errors.specialization}</span>}
-                  </div>
-
-                  <div className="form-group">
-                    <label>Years of Teaching*</label>
-                    <input
-                      type="number"
-                      name="yearsOfTeaching"
-                      value={formData.yearsOfTeaching}
-                      onChange={handleChange}
-                      placeholder="Enter years of teaching"
-                      min="0"
-                      required
-                    />
-                    {errors.yearsOfTeaching && <span className="error">{errors.yearsOfTeaching}</span>}
-                  </div>
-                </div>
-              </>
-            ) : modalType === 'subject' ? (
-              <>
-                <div className="form-section">
-                  <h3>Course Information</h3>
-                  <div className="form-group">
-                    <label>Course ID*</label>
-                    <input
-                      type="text"
-                      name="courseId"
-                      value={formData.courseId}
-                      onChange={handleChange}
-                      placeholder="Enter course ID"
-                      required
-                    />
-                    {errors.courseId && <span className="error">{errors.courseId}</span>}
-                  </div>
-
-                  <div className="form-group">
-                    <label>Course Name*</label>
-                    <input
-                      type="text"
-                      name="courseName"
-                      value={formData.courseName}
-                      onChange={handleChange}
-                      placeholder="Enter course name"
-                      required
-                    />
-                    {errors.courseName && <span className="error">{errors.courseName}</span>}
-                  </div>
-
-                  <div className="form-group">
-                    <label>EDP Code*</label>
-                    <input
-                      type="text"
-                      name="edpCode"
-                      value={formData.edpCode}
-                      onChange={handleChange}
-                      placeholder="Enter EDP code"
-                      required
-                    />
-                    {errors.edpCode && <span className="error">{errors.edpCode}</span>}
-                  </div>
-
-                  <div className="form-group">
-                    <label>Course Description*</label>
-                    <textarea
-                      name="courseDescription"
-                      value={formData.courseDescription}
-                      onChange={handleChange}
-                      placeholder="Enter course description"
-                      rows="4"
-                      required
-                    />
-                    {errors.courseDescription && <span className="error">{errors.courseDescription}</span>}
-                  </div>
-
-                  <div className="form-group">
-                    <label>Teacher Email*</label>
-                    <input
-                      type="email"
-                      name="teacherEmail"
-                      value={formData.teacherEmail}
-                      onChange={handleChange}
-                      placeholder="Enter teacher's email"
-                      required
-                    />
-                    {errors.teacherEmail && <span className="error">{errors.teacherEmail}</span>}
-                  </div>
-
-                  <div className="form-group">
-                    <label>Year*</label>
-                    <input
-                      type="number"
-                      name="year"
-                      value={formData.year}
-                      onChange={handleChange}
-                      placeholder="Enter year"
-                      required
-                    />
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="form-section">
-                  <h3>Student Information</h3>
-                  <div className="form-group">
-                    <label>First Name*</label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      placeholder="Enter first name"
-                      required
-                    />
-                    {errors.firstName && <span className="error">{errors.firstName}</span>}
-                  </div>
-
-                  <div className="form-group">
-                    <label>Last Name*</label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      placeholder="Enter last name"
-                      required
-                    />
-                    {errors.lastName && <span className="error">{errors.lastName}</span>}
-                  </div>
-
-                  <div className="form-group">
-                    <label>Email*</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="Enter email address"
-                      required
-                    />
-                    {errors.email && <span className="error">{errors.email}</span>}
-                  </div>
-
-                  <div className="form-group">
-                    <label>Phone*</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      placeholder="Enter phone number"
-                      required
-                    />
-                    {errors.phone && <span className="error">{errors.phone}</span>}
-                  </div>
-
-                  <div className="form-group">
-                    <label>Student ID*</label>
-                    <input
-                      type="text"
-                      name="userId"
-                      value={formData.userId}
-                      onChange={handleChange}
-                      placeholder="Enter student ID"
-                      required
-                    />
-                    {errors.userId && <span className="error">{errors.userId}</span>}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
+                )}
+              </div>
+            </>
+          )}
 
           <div className="modal-actions">
             <button type="button" className="secondary-button" onClick={onClose}>
               Cancel
             </button>
             <button type="submit" className="primary-button">
-              {data ? 'Save Changes' : `Add ${modalType}`}
+              {data ? 'Save Changes' : 'Add'}
             </button>
           </div>
         </form>
