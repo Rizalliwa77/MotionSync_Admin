@@ -18,18 +18,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
 }
 
 .logo-container {
   position: absolute;
-  top: 2.5rem;
+  top: 2rem;
   left: 1rem;
   z-index: 3;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .logo {
-  height: 40px;
+  height: 80px;
   width: auto;
+  display: block;
 }
 
 .welcome-banner {
@@ -74,7 +79,9 @@
 
 .background-image {
   position: absolute;
-  bottom: 0;
+  bottom: -105px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
   max-width: 800px;
   z-index: 1;
@@ -86,6 +93,44 @@
   width: 100%;
   height: auto;
   display: block;
+  object-fit: contain;
+}
+
+.login-container {
+  display: flex;
+  width: 100%;
+  max-width: 900px;
+  min-height: 500px;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.overlay-container {
+  flex: 1;
+  background: #00A67E;
+  color: white;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.overlay-panel {
+  margin-bottom: auto;
+}
+
+.overlay-image {
+  position: absolute;
+  bottom: -3.3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 400px;
 }
 
 @media (max-width: 768px) {
@@ -103,5 +148,19 @@
   .background-image {
     position: relative;
     margin-top: 2rem;
+  }
+
+  .logo-container {
+    top: 1rem;
+    left: 1rem;
+    padding: 0.75rem;
+  }
+
+  .logo {
+    height: 60px;
+  }
+
+  .login-container {
+    min-height: 400px;
   }
 }

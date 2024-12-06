@@ -1,4 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import '../../assets/General/Analytics.css';
+import Sidebar from '../Sidebar';
+import { getFirestore, collection, getDocs, query, where, orderBy } from 'firebase/firestore';
+import { db } from '../../firebase/firebaseConfig';
+import { analytics, logAnalyticsEvent } from '../../firebase/firebaseConfig';
+import { Line, Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -6,14 +12,10 @@ import {
     PointElement,
     LineElement,
     BarElement,
-    ArcElement,
     Title,
     Tooltip,
     Legend
 } from 'chart.js';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
-import '../../assets/General/Analytics.css';
-import Sidebar from '../Sidebar';
 
 // Register ChartJS components
 ChartJS.register(
@@ -22,7 +24,6 @@ ChartJS.register(
     PointElement,
     LineElement,
     BarElement,
-    ArcElement,
     Title,
     Tooltip,
     Legend
@@ -30,158 +31,148 @@ ChartJS.register(
 
 const Analytics = () => {
     const [isSidebarHovered, setIsSidebarHovered] = useState(false);
-    const [timeRange, setTimeRange] = useState('week'); // 'day', 'week', 'month', 'year'
+    const [timeRange, setTimeRange] = useState('week');
+    const [analyticsData, setAnalyticsData] = useState({
+        totalUsers: 0,
+        activeUsers: 0,
+        registeredHubs: 0,
+        conversionRate: '0%'
+    });
 
-    // Enhanced chart options
-    const commonOptions = {
+    const [analyticsMetrics, setAnalyticsMetrics] = useState({
+        pageViews: 0,
+        userEngagement: 0,
+        activeUsers: {
+            daily: 0,
+            weekly: 0,
+            monthly: 0
+        }
+    });
+
+    const [userGrowthData, setUserGrowthData] = useState({
+        labels: [],
+        datasets: []
+    });
+    const [hubDistributionData, setHubDistributionData] = useState({
+        labels: [],
+        datasets: []
+    });
+
+    // Add chart options
+    const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: 'top',
-                labels: {
-                    padding: 20,
-                    font: {
-                        size: 12
-                    }
-                }
-            }
-        }
-    };
-
-    const lineOptions = {
-        ...commonOptions,
-        plugins: {
-            ...commonOptions.plugins,
-            title: {
-                display: true,
-                text: 'Monthly User Growth',
-                padding: 20,
-                font: {
-                    size: 16,
-                    weight: 'bold'
-                }
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: {
-                    color: 'rgba(0, 0, 0, 0.05)'
-                }
             },
-            x: {
-                grid: {
-                    display: false
-                }
-            }
-        }
-    };
-
-    const barOptions = {
-        ...commonOptions,
-        plugins: {
-            ...commonOptions.plugins,
-            title: {
-                display: true,
-                text: 'Weekly User Activity',
-                padding: 20,
-                font: {
-                    size: 16,
-                    weight: 'bold'
-                }
-            }
         },
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: {
-                    color: 'rgba(0, 0, 0, 0.05)'
-                }
-            },
-            x: {
-                grid: {
-                    display: false
-                }
+    };
+
+    useEffect(() => {
+        const fetchAnalyticsData = async () => {
+            try {
+                // Get users collection reference
+                const usersRef = collection(db, 'users');
+                const hubsRef = collection(db, 'hubs');
+
+                // Get total users count
+                const usersSnapshot = await getDocs(usersRef);
+                const totalUsers = usersSnapshot.size;
+
+                // Get total hubs count
+                const hubsSnapshot = await getDocs(hubsRef);
+                const totalHubs = hubsSnapshot.size;
+
+                // Get user creation dates for growth chart
+                const userDates = usersSnapshot.docs.map(doc => {
+                    return doc.data().createdAt?.toDate() || new Date();
+                });
+
+                // Get hub types for distribution chart
+                const hubTypes = hubsSnapshot.docs.map(doc => doc.data().type);
+
+                // Process user growth data
+                const userGrowthByDate = processUserGrowthData(userDates);
+                
+                // Process hub distribution data
+                const hubDistribution = processHubDistributionData(hubTypes);
+
+                // Update analytics data
+                setAnalyticsData({
+                    totalUsers,
+                    activeUsers: totalUsers, // You might want to refine this based on your active user criteria
+                    registeredHubs: totalHubs,
+                    conversionRate: `${((totalHubs / totalUsers) * 100).toFixed(1)}%`
+                });
+
+                // Update chart data
+                setUserGrowthData({
+                    labels: userGrowthByDate.labels,
+                    datasets: [{
+                        label: 'User Growth',
+                        data: userGrowthByDate.data,
+                        borderColor: '#00A67E',
+                        backgroundColor: 'rgba(0, 166, 126, 0.1)',
+                        fill: true,
+                    }]
+                });
+
+                setHubDistributionData({
+                    labels: hubDistribution.labels,
+                    datasets: [{
+                        label: 'Hub Distribution',
+                        data: hubDistribution.data,
+                        backgroundColor: [
+                            'rgba(0, 166, 126, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                        ],
+                    }]
+                });
+
+            } catch (error) {
+                console.error('Error fetching analytics data:', error);
             }
-        }
-    };
+        };
 
-    const doughnutOptions = {
-        ...commonOptions,
-        plugins: {
-            ...commonOptions.plugins,
-            title: {
-                display: true,
-                text: 'User Distribution',
-                padding: 10,
-                font: {
-                    size: 14,
-                    weight: 'bold'
-                }
+        fetchAnalyticsData();
+    }, [timeRange]);
+
+    // Helper function to process user growth data
+    const processUserGrowthData = (dates) => {
+        const sortedDates = dates.sort((a, b) => a - b);
+        const dateLabels = [];
+        const userCounts = [];
+        let userCount = 0;
+
+        sortedDates.forEach(date => {
+            const dateStr = date.toLocaleDateString();
+            if (!dateLabels.includes(dateStr)) {
+                dateLabels.push(dateStr);
+                userCount++;
+                userCounts.push(userCount);
             }
-        },
-        cutout: '70%',
-        maintainAspectRatio: true,
-        aspectRatio: 2
+        });
+
+        return {
+            labels: dateLabels,
+            data: userCounts
+        };
     };
 
-    // Enhanced data with gradients
-    const userGrowthData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{
-            label: 'User Growth',
-            data: [150, 200, 250, 300, 380, 450],
-            borderColor: '#00A67E',
-            backgroundColor: 'rgba(0, 166, 126, 0.1)',
-            borderWidth: 2,
-            tension: 0.4,
-            fill: true,
-            pointBackgroundColor: '#00A67E',
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 6
-        }]
-    };
+    // Helper function to process hub distribution data
+    const processHubDistributionData = (hubTypes) => {
+        const distribution = hubTypes.reduce((acc, type) => {
+            acc[type] = (acc[type] || 0) + 1;
+            return acc;
+        }, {});
 
-    // Sample data for user activity
-    const userActivityData = {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        datasets: [{
-            label: 'Active Users',
-            data: [65, 59, 80, 81, 56, 40, 45],
-            backgroundColor: '#0c8e6b',
-        }]
-    };
-
-    // Sample data for user types
-    const userTypesData = {
-        labels: ['Regular Users', 'Premium Users', 'Admin Users'],
-        datasets: [{
-            data: [300, 150, 50],
-            backgroundColor: [
-                '#0c8e6b',
-                '#2ec4b6',
-                '#ff9f1c',
-            ],
-        }]
-    };
-
-    // Enhanced analytics data
-    const analyticsData = {
-        totalUsers: 500,
-        activeUsers: 350,
-        averageSessionTime: '25 mins',
-        conversionRate: '68%',
-        retentionRate: '75%',
-        newUsersToday: 15,
-        bounceRate: '32%',
-        pageViews: 12500,
-        avgLoadTime: '1.2s',
-        errorRate: '0.5%',
-        activeSubscriptions: 280,
-        revenueGrowth: '+15%'
+        return {
+            labels: Object.keys(distribution),
+            data: Object.values(distribution)
+        };
     };
 
     return (
@@ -207,88 +198,57 @@ const Analytics = () => {
                         </div>
                     </div>
 
-                    {/* Key Metrics Grid */}
                     <div className="metrics-grid">
                         <div className="metric-card">
                             <span className="material-symbols-outlined">group</span>
                             <h3>Total Users</h3>
-                            <p>{analyticsData.totalUsers}</p>
+                            <p>{analyticsData?.totalUsers || 'N/A'}</p>
                         </div>
                         <div className="metric-card">
                             <span className="material-symbols-outlined">person</span>
                             <h3>Active Users</h3>
-                            <p>{analyticsData.activeUsers}</p>
+                            <p>{analyticsData?.activeUsers || 'N/A'}</p>
                         </div>
                         <div className="metric-card">
-                            <span className="material-symbols-outlined">timer</span>
-                            <h3>Avg. Session Time</h3>
-                            <p>{analyticsData.averageSessionTime}</p>
+                            <span className="material-symbols-outlined">domain</span>
+                            <h3>Registered Hubs</h3>
+                            <p>{analyticsData?.registeredHubs || 'N/A'}</p>
                         </div>
                         <div className="metric-card">
                             <span className="material-symbols-outlined">trending_up</span>
                             <h3>Conversion Rate</h3>
-                            <p>{analyticsData.conversionRate}</p>
+                            <p>{analyticsData?.conversionRate || 'N/A'}</p>
                         </div>
                     </div>
 
-                    {/* Performance Metrics */}
                     <div className="performance-metrics">
-                        <div className="metric-card">
-                            <span className="material-symbols-outlined">speed</span>
-                            <h3>Avg Load Time</h3>
-                            <p>{analyticsData.avgLoadTime}</p>
-                        </div>
-                        <div className="metric-card">
-                            <span className="material-symbols-outlined">error</span>
-                            <h3>Error Rate</h3>
-                            <p>{analyticsData.errorRate}</p>
-                        </div>
                         <div className="metric-card">
                             <span className="material-symbols-outlined">visibility</span>
                             <h3>Page Views</h3>
-                            <p>{analyticsData.pageViews}</p>
+                            <p>{analyticsMetrics.pageViews || 'N/A'}</p>
+                            <small>Last {timeRange}</small>
                         </div>
                         <div className="metric-card">
-                            <span className="material-symbols-outlined">call_missed_outgoing</span>
-                            <h3>Bounce Rate</h3>
-                            <p>{analyticsData.bounceRate}</p>
+                            <span className="material-symbols-outlined">group</span>
+                            <h3>Active Users</h3>
+                            <p>{analyticsMetrics.activeUsers[timeRange] || 'N/A'}</p>
+                            <small>Last {timeRange}</small>
                         </div>
                     </div>
 
-                    {/* Charts Grid */}
+                    {/* Add charts section */}
                     <div className="charts-grid">
-                        <div className="chart-card growth-chart">
-                            <Line options={lineOptions} data={userGrowthData} />
+                        <div className="chart-card">
+                            <h3>User Growth Over Time</h3>
+                            <div className="chart-container">
+                                <Line data={userGrowthData} options={chartOptions} />
+                            </div>
                         </div>
-                        <div className="chart-card activity-chart">
-                            <Bar options={barOptions} data={userActivityData} />
-                        </div>
-                        <div className="chart-card distribution-chart">
-                            <Doughnut options={doughnutOptions} data={userTypesData} />
-                        </div>
-                    </div>
-
-                    {/* Business Metrics */}
-                    <div className="business-metrics">
-                        <div className="metric-card">
-                            <span className="material-symbols-outlined">subscriptions</span>
-                            <h3>Active Subscriptions</h3>
-                            <p>{analyticsData.activeSubscriptions}</p>
-                        </div>
-                        <div className="metric-card">
-                            <span className="material-symbols-outlined">monitoring</span>
-                            <h3>Revenue Growth</h3>
-                            <p>{analyticsData.revenueGrowth}</p>
-                        </div>
-                        <div className="metric-card">
-                            <span className="material-symbols-outlined">auto_graph</span>
-                            <h3>Retention Rate</h3>
-                            <p>{analyticsData.retentionRate}</p>
-                        </div>
-                        <div className="metric-card">
-                            <span className="material-symbols-outlined">person_add</span>
-                            <h3>New Users Today</h3>
-                            <p>{analyticsData.newUsersToday}</p>
+                        <div className="chart-card">
+                            <h3>Hub Distribution</h3>
+                            <div className="chart-container">
+                                <Bar data={hubDistributionData} options={chartOptions} />
+                            </div>
                         </div>
                     </div>
                 </div>

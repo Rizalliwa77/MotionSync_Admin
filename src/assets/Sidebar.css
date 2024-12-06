@@ -130,15 +130,15 @@ body {
 }
 
 .sidebar-links .sidebar-section.divider {
-    border-top: 1px solid #000; /* Change divider color to black */
-    height: 1px;
     margin: 15px 0;
+    border-top: none;
+    height: auto;
 }
 
 .sidebar-links .sidebar-section h4 {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #000; /* Change text color to black */
+    color: #000;
     margin-bottom: 5px;
 }
 
@@ -151,11 +151,7 @@ body {
 }
 
 .sidebar-links .sidebar-section .menu-separator {
-    height: 1px;
-    background-color: #000; /* Change separator color to black */
-    position: relative;
-    top: -10px;
-    z-index: 0;
+    display: none;
 }
 
 .sidebar:not(.hovered) .sidebar-links .sidebar-section:not(.divider) {

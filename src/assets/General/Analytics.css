@@ -67,40 +67,6 @@
     margin: 0;
 }
 
-.charts-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    padding: 0 2rem 1.5rem 2rem;
-    background-color: #f8f9fa;
-}
-
-.chart-card {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    border: 1px solid #eee;
-    transition: all 0.3s ease;
-}
-
-.chart-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-color: #00A67E;
-}
-
-.chart-card:last-child {
-    grid-column: span 2;
-}
-
-.additional-metrics {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    padding: 0 2rem 2rem 2rem;
-    background-color: #f8f9fa;
-}
-
 /* Custom scrollbar */
 .analytics-container::-webkit-scrollbar {
     width: 8px;
@@ -121,38 +87,17 @@
 
 /* Responsive Design */
 @media (max-width: 1400px) {
-    .metrics-grid {
+    .metrics-grid,
+    .performance-metrics {
         grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 1024px) {
-    .charts-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .chart-card:last-child {
-        grid-column: auto;
     }
 }
 
 @media (max-width: 768px) {
     .metrics-grid,
-    .additional-metrics {
+    .performance-metrics {
         grid-template-columns: 1fr;
         padding: 1rem;
-    }
-
-    .charts-grid {
-        padding: 0 1rem 1rem 1rem;
-    }
-
-    .overview-section {
-        padding: 1rem;
-    }
-
-    .metric-card {
-        min-height: 140px;
     }
 }
 
@@ -186,52 +131,37 @@
     background-color: #f8f9fa;
 }
 
+/* Add these styles for the charts */
 .charts-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
-    padding: 0 2rem 1.5rem 2rem;
+    padding: 1.5rem 2rem;
     background-color: #f8f9fa;
 }
 
-.growth-chart,
-.activity-chart {
-    height: 400px;
+.chart-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
 }
 
-.distribution-chart {
+.chart-card h3 {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.chart-container {
     height: 300px;
-    grid-column: span 2;
-    display: flex;
-    justify-content: center;
+    position: relative;
 }
 
-.distribution-chart canvas {
-    max-width: 500px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 1400px) {
-    .performance-metrics,
-    .business-metrics {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
     .charts-grid {
         grid-template-columns: 1fr;
-    }
-
-    .distribution-chart {
-        grid-column: auto;
-    }
-}
-
-@media (max-width: 768px) {
-    .performance-metrics,
-    .business-metrics {
-        grid-template-columns: 1fr;
-        padding: 1rem;
     }
 }

@@ -21,7 +21,7 @@
   display: flex;
   width: 100%;
   max-width: 1000px;
-  min-height: 600px;
+  min-height: 425px;
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -126,6 +126,7 @@ button:hover {
   color: white;
   font-size: 3rem;
   line-height: 1.2;
+  margin-top: -10rem;
   margin-bottom: 1rem;
 }
 

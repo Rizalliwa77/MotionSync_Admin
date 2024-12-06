@@ -1,6 +1,43 @@
+.dashboard {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+}
+
+.main-content {
+    height: 100vh;
+    overflow-y: scroll;
+    flex-grow: 1;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+    position: relative;
+    z-index: 1000;
+}
+
+.main-content::-webkit-scrollbar {
+    width: 8px;
+    z-index: 1001;
+}
+
+.main-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    z-index: 1001;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+    z-index: 1001;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 .user-content {
     padding: 20px;
     width: 100%;
+    min-height: 100%;
 }
 
 .search-section {
@@ -43,11 +80,49 @@
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    max-height: 60vh;
+    position: relative;
+}
+
+.users-table-wrapper {
+    overflow-y: auto;
+    max-height: 60vh;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+    position: relative;
+    z-index: 1000;
+}
+
+.users-table-wrapper::-webkit-scrollbar {
+    width: 8px;
+    z-index: 1001;
+}
+
+.users-table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    z-index: 1001;
+}
+
+.users-table-wrapper::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+    z-index: 1001;
+}
+
+.users-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .users-table {
     width: 100%;
     border-collapse: collapse;
+}
+
+.users-table th {
+    position: sticky;
+    top: 0;
+    background: #f8f8f8;
+    z-index: 1002;
 }
 
 .users-table th,
@@ -138,4 +213,112 @@
 .folder-card p {
     color: #666;
     font-size: 14px;
+}
+
+.loading-spinner {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 900px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.close-button:hover {
+    color: #333;
+}
+
+.files-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.files-table th,
+.files-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.files-table th {
+    background: #f8f8f8;
+    font-weight: 600;
+}
+
+.download-button {
+    padding: 6px 12px;
+    background: #0c8e6b;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+    background: #0a7d5c;
+}
+
+.no-files {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+}
+
+/* Make sure modal scrollbar matches the theme */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

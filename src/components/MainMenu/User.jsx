@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase/firebaseConfig';
 import '../../assets/MainMenu/User.css';
 import Sidebar from '../Sidebar';
 
@@ -8,109 +10,177 @@ function User() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [isSidebarHovered, setIsSidebarHovered] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [newUser, setNewUser] = useState({
+    email: '',
+    fname: '',
+    lname: '',
+    mname: '',
+    gender: 'Not set',
+    userAge: 0,
+    userType: 'Free User',
+    accountStatus: 'Active',
+    fcmToken: ''
+  });
 
-  // Fetch users from Firestore
   useEffect(() => {
-    const fetchUsers = async () => {
-      const db = getFirestore();
-      const usersCollection = collection(db, 'users');
-      try {
-        const querySnapshot = await getDocs(usersCollection);
-        const usersData = querySnapshot.docs.map((doc) => ({
-          id: doc.id, // Firestore document ID
-          ...doc.data(),
-        }));
-        setUsers(usersData);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
-
     fetchUsers();
   }, []);
 
-  const handleSidebarHover = (hovered) => {
-    setIsSidebarHovered(hovered);
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm, users]);
+
+  const fetchUsers = async () => {
+    const db = getFirestore();
+    const usersCollection = collection(db, 'users');
+    try {
+      const querySnapshot = await getDocs(usersCollection);
+      const usersData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setUsers(usersData);
+      setFilteredUsers(usersData);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
   };
 
   const handleSearch = () => {
-    console.log(`Searching for: ${searchTerm}`);
-    const filteredUsers = users.filter((user) =>
-      user.fname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.lname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    if (!searchTerm.trim()) {
+      setFilteredUsers(users);
+      return;
+    }
+
+    const filtered = users.filter(user => 
+      user.fname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.lname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setUsers(filteredUsers);
+    setFilteredUsers(filtered);
   };
 
-  const handleAddUser = () => {
-    console.log('Adding new user');
-    // Implement add user functionality here
-  };
+  const handleAddUser = async () => {
+    try {
+      // Create authentication user
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        newUser.email,
+        'defaultPassword123' // You might want to generate a random password
+      );
 
-  const handleEditUser = () => {
-    if (selectedUser) {
-      console.log(`Editing user: ${selectedUser.fname} ${selectedUser.lname}`);
-      // Implement edit user functionality here
-    } else {
-      alert('Please select a user to edit');
-    }
-  };
+      // Add user to Firestore
+      const db = getFirestore();
+      await addDoc(collection(db, 'users'), {
+        ...newUser,
+        uid: userCredential.user.uid,
+        fcmToken: '',
+        createdAt: new Date()
+      });
 
-  const handleDeleteUser = () => {
-    if (selectedUser) {
-      console.log(`Deleting user: ${selectedUser.fname} ${selectedUser.lname}`);
-      // Implement delete user functionality here
-    } else {
-      alert('Please select a user to delete');
-    }
-  };
-
-  const handleManagePermissions = () => {
-    if (selectedUser) {
-      console.log(`Managing permissions for: ${selectedUser.fname} ${selectedUser.lname}`);
-      // Implement manage permissions functionality here
-    } else {
-      alert('Please select a user to manage permissions');
+      // Refresh users list and close modal
+      fetchUsers();
+      setIsAddModalOpen(false);
+      // Reset form
+      setNewUser({
+        email: '',
+        fname: '',
+        lname: '',
+        mname: '',
+        gender: 'Not set',
+        userAge: 0,
+        userType: 'Free User',
+        accountStatus: 'Active',
+        fcmToken: ''
+      });
+    } catch (error) {
+      console.error('Error adding user:', error);
+      alert('Error adding user: ' + error.message);
     }
   };
 
   return (
     <div className="user-page">
-      <Sidebar onHoverChange={handleSidebarHover} />
+      <Sidebar onHoverChange={setIsSidebarHovered} />
       <main className={`main-content ${isSidebarHovered ? 'sidebar-hovered' : ''}`}>
         <div className="overview-section">
           <h1>User Management</h1>
         </div>
 
         <div className="cards-container">
-          {/* User Table Card */}
+          {/* User Management Actions */}
+          <div className="card user-management-card">
+            <div className="card-content">
+              <div className="action-section">
+                <h3>Add New User</h3>
+                <button className="add-user-btn" onClick={() => setIsAddModalOpen(true)}>
+                  <span className="material-symbols-outlined">person_add</span>
+                  Add User
+                </button>
+              </div>
+
+              {selectedUser && (
+                <div className="action-section">
+                  <h3>Selected User: {selectedUser.fname} {selectedUser.lname}</h3>
+                  <div className="action-buttons">
+                    <button className="edit-user-btn" onClick={() => setIsEditModalOpen(true)}>
+                      <span className="material-symbols-outlined">edit</span>
+                      Edit User
+                    </button>
+                    <button className="delete-user-btn" onClick={() => setIsDeleteModalOpen(true)}>
+                      <span className="material-symbols-outlined">delete</span>
+                      Delete User
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* User Table */}
           <div className="card user-table-card">
             <div className="card-header">
-              <h2>User List</h2>
+              <h2>Users List</h2>
+              <div className="search-section">
+                <input
+                  type="text"
+                  placeholder="Search users..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="user-search-input"
+                />
+              </div>
             </div>
-            <div className="card-content table-container">
+            <div className="table-container">
               <table className="user-table">
                 <thead>
                   <tr>
-                    <th>ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Email Address</th>
+                    <th>Select</th>
+                    <th>Name</th>
+                    <th>Email</th>
                     <th>Type</th>
                     <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((user) => (
-                    <tr
-                      key={user.uid}
-                      onClick={() => setSelectedUser(user)}
-                      className={selectedUser && selectedUser.uid === user.uid ? 'selected' : ''}
+                  {filteredUsers.map((user) => (
+                    <tr 
+                      key={user.id}
+                      className={selectedUser?.id === user.id ? 'selected' : ''}
                     >
-                      <td>{user.uid}</td>
-                      <td>{user.fname}</td>
-                      <td>{user.lname}</td>
+                      <td>
+                        <input
+                          type="radio"
+                          name="selectedUser"
+                          checked={selectedUser?.id === user.id}
+                          onChange={() => setSelectedUser(user)}
+                        />
+                      </td>
+                      <td>{`${user.fname} ${user.lname}`}</td>
                       <td>{user.email}</td>
                       <td>{user.userType}</td>
                       <td>{user.accountStatus}</td>
@@ -120,77 +190,88 @@ function User() {
               </table>
             </div>
           </div>
+        </div>
 
-          {/* User Management Card */}
-          <div className="card user-management-card">
-            <div className="scrollable-content">
-              <div className="card-section">
-                <h3>User Statistics</h3>
-                <div className="user-statistics-content">
-                  <div className="stat-item">
-                    <h3 className="stat-number">{users.length}</h3>
-                    <p className="stat-description">Total Users</p>
-                  </div>
-                  <div className="stat-item">
-                    <h3 className="stat-number">{users.filter((user) => user.accountStatus === 'Active').length}</h3>
-                    <p className="stat-description">Active Users</p>
-                  </div>
-                </div>
+        {/* Add User Modal */}
+        {isAddModalOpen && (
+          <div className="modal">
+            <div className="modal-content">
+              <h2>Add New User</h2>
+              <input
+                type="email"
+                placeholder="Email"
+                value={newUser.email}
+                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="First Name"
+                value={newUser.fname}
+                onChange={(e) => setNewUser({ ...newUser, fname: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Middle Name"
+                value={newUser.mname}
+                onChange={(e) => setNewUser({ ...newUser, mname: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Last Name"
+                value={newUser.lname}
+                onChange={(e) => setNewUser({ ...newUser, lname: e.target.value })}
+              />
+              <select
+                value={newUser.gender}
+                onChange={(e) => setNewUser({ ...newUser, gender: e.target.value })}
+              >
+                <option value="Not set">Not set</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+              <input
+                type="number"
+                placeholder="Age"
+                value={newUser.userAge}
+                onChange={(e) => setNewUser({ ...newUser, userAge: parseInt(e.target.value) })}
+              />
+              <select
+                value={newUser.userType}
+                onChange={(e) => setNewUser({ ...newUser, userType: e.target.value })}
+              >
+                <option value="Free User">Free User</option>
+                <option value="Premium User">Premium User</option>
+                <option value="Admin">Admin</option>
+              </select>
+              <select
+                value={newUser.accountStatus}
+                onChange={(e) => setNewUser({ ...newUser, accountStatus: e.target.value })}
+              >
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Suspended">Suspended</option>
+              </select>
+              <div className="modal-buttons">
+                <button onClick={handleAddUser}>Add User</button>
+                <button onClick={() => setIsAddModalOpen(false)}>Cancel</button>
               </div>
-
-              <div className="card-section">
-                <h3>User Search</h3>
-                <input
-                  type="text"
-                  placeholder="Search users..."
-                  className="user-search-input"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <button className="search-btn" onClick={handleSearch}>
-                  <span className="material-symbols-outlined">search</span>
-                  Search
-                </button>
-              </div>
-
-              <div className="card-section">
-                <h3>User Actions</h3>
-                <div className="quick-actions">
-                  <button className="action-btn" onClick={handleAddUser}>
-                    <span className="material-symbols-outlined">person_add</span>
-                    Add New User
-                  </button>
-                  <button className="action-btn" onClick={handleEditUser}>
-                    <span className="material-symbols-outlined">edit</span>
-                    Edit User
-                  </button>
-                  <button className="action-btn" onClick={handleDeleteUser}>
-                    <span className="material-symbols-outlined">delete</span>
-                    Delete User
-                  </button>
-                </div>
-              </div>
-
-              <div className="card-section">
-                <h3>User Permissions</h3>
-                <button className="permission-btn" onClick={handleManagePermissions}>
-                  <span className="material-symbols-outlined">admin_panel_settings</span>
-                  Manage Permissions
-                </button>
-              </div>
-
-              {selectedUser && (
-                <div className="card-section">
-                  <h3>Selected User</h3>
-                  <p><strong>Name:</strong> {selectedUser.fname} {selectedUser.lname}</p>
-                  <p><strong>Email:</strong> {selectedUser.email}</p>
-                  <p><strong>Type:</strong> {selectedUser.userType}</p>
-                  <p><strong>Status:</strong> {selectedUser.accountStatus}</p>
-                </div>
-              )}
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {isDeleteModalOpen && selectedUser && (
+          <div className="modal">
+            <div className="modal-content">
+              <h2>Confirm Delete</h2>
+              <p>Are you sure you want to delete {selectedUser.fname} {selectedUser.lname}?</p>
+              <div className="modal-buttons">
+                <button className="cancel-btn" onClick={() => setIsDeleteModalOpen(false)}>Cancel</button>
+                <button className="delete-confirm-btn" onClick={handleDeleteUser}>Delete</button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

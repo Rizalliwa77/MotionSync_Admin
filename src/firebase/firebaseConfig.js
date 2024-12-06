@@ -1,5 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAnalytics, logEvent } from "firebase/analytics";
+import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -15,6 +17,30 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
 const storage = getStorage(app);
 
-export { db, storage };
+// Helper function to log analytics events
+export const logAnalyticsEvent = (eventName, eventParams = {}) => {
+  logEvent(analytics, eventName, eventParams);
+};
+
+// Helper function to get analytics data
+// Note: Firebase Analytics doesn't provide direct access to analytics data through the client SDK
+// You'll need to use Firebase Analytics dashboard or export data to BigQuery for detailed analytics
+export const getAnalyticsData = async () => {
+  try {
+    // For now, return mock data
+    // In production, you should implement a backend service to fetch this data
+    return {
+      totalUsers: 0,
+      monthlyData: Array(6).fill(0)
+    };
+  } catch (error) {
+    console.error('Error fetching analytics data:', error);
+    throw error;
+  }
+};
+
+export { db, analytics, auth, storage };
