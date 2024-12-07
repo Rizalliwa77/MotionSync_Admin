@@ -63,7 +63,7 @@ const HubAdmin_Classroom = () => {
   useEffect(() => {
     const fetchData = async (type, setState) => {
       try {
-        const ref = collection(db, `schools/7kJvkewDYT1hTRKieGcQ/${type}`);
+        const ref = collection(db, `schools/${SCHOOL_ID}/${type}`);
         const snapshot = await getDocs(ref);
         const list = snapshot.docs.map(doc => ({
           id: doc.id,
@@ -75,7 +75,7 @@ const HubAdmin_Classroom = () => {
       }
     };
 
-    fetchData('subject', setSubjects);
+    fetchData('courses', setCourses);
     fetchData('teacher', setTeachers);
     fetchData('applications', setApplications);
   }, []);
@@ -140,27 +140,21 @@ const HubAdmin_Classroom = () => {
   };
 
   const handleFormChange = (formData) => {
-    // Compare new data with original data
-    const isChanged = JSON.stringify(formData) !== JSON.stringify(originalData);
+    const sanitizedData = sanitizeFormData(formData, modalType);
+    const isChanged = JSON.stringify(sanitizedData) !== JSON.stringify(originalData);
     setHasChanges(isChanged);
   };
 
-  const handleDelete = async (item, type, setState) => {
+  const handleDelete = async (item, type) => {
     if (window.confirm(`Are you sure you want to delete this ${type}?`)) {
       try {
-        const collectionPath = type === 'subject' 
-          ? `schools/${SCHOOL_ID}/courses` 
-          : `schools/${SCHOOL_ID}/${type}`;
+        const docRef = doc(db, `schools/${SCHOOL_ID}/${type === 'teacher' ? 'teacher' : 'courses'}`, item.id);
+        await deleteDoc(docRef);
         
-        const ref = doc(db, collectionPath, item.id);
-        await deleteDoc(ref);
-        
-        if (type === 'subject') {
-          setCourses(prev => prev.filter(i => i.id !== item.id));
-        } else if (type === 'teacher') {
+        if (type === 'teacher') {
           setTeachers(prev => prev.filter(i => i.id !== item.id));
-        } else if (type === 'student') {
-          setStudents(prev => prev.filter(i => i.id !== item.id));
+        } else {
+          setCourses(prev => prev.filter(i => i.id !== item.id));
         }
         
         alert(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully`);
@@ -185,120 +179,43 @@ const HubAdmin_Classroom = () => {
   };
 
   const handleSave = async (formData) => {
-    if (!hasChanges) {
-      setShowModal(false);
-      return;
-    }
-
     try {
-      if (modalType === 'teacher') {
-        const teacherData = {
-          teacherId: formData.teacherId || generateStaticId(),
-          teacherFName: String(formData.teacherFName || '').trim(),
-          teacherMName: String(formData.teacherMName || '').trim(),
-          teacherLName: String(formData.teacherLName || '').trim(),
-          teacherEmail: String(formData.teacherEmail || '').trim(),
-          specialization: String(formData.specialization || '').trim(),
-          yearsTeaching: Number(formData.yearsTeaching || 0),
-          timestamp: new Date().toISOString()
-        };
-
-        if (modalData?.id) {
-          // Update existing teacher
-          const teacherRef = doc(db, `schools/${SCHOOL_ID}/teacher`, modalData.id);
-          await updateDoc(teacherRef, teacherData);
-          
-          // Update local state
-          setTeachers(prevTeachers =>
-            prevTeachers.map(teacher =>
-              teacher.id === modalData.id ? { ...teacherData, id: modalData.id } : teacher
-            )
-          );
+      const sanitizedData = sanitizeFormData(formData, modalType);
+      
+      if (editingId) {
+        // Update existing item
+        const docRef = doc(db, `schools/${SCHOOL_ID}/${modalType === 'teacher' ? 'teacher' : 'courses'}`, editingId);
+        await updateDoc(docRef, sanitizedData);
+        
+        // Update local state
+        if (modalType === 'teacher') {
+          setTeachers(prev => prev.map(item => 
+            item.id === editingId ? { ...item, ...sanitizedData } : item
+          ));
         } else {
-          // Add new teacher
-          const teachersRef = collection(db, `schools/${SCHOOL_ID}/teacher`);
-          const docRef = await addDoc(teachersRef, teacherData);
-          
-          setTeachers(prevTeachers => [
-            ...prevTeachers,
-            { id: docRef.id, ...teacherData }
-          ]);
+          setCourses(prev => prev.map(item => 
+            item.id === editingId ? { ...item, ...sanitizedData } : item
+          ));
         }
-
-      } else if (modalType === 'subject') {
-        const subjectData = {
-          courseId: formData.courseId || generateStaticId(),
-          courseName: String(formData.courseName || '').trim(),
-          edpCode: String(formData.edpCode || '').trim(),
-          courseDescription: String(formData.courseDescription || '').trim(),
-          teacherEmail: String(formData.teacherEmail || '').trim(),
-          teacherName: String(formData.teacherName || ''),
-          year: Number(formData.year || new Date().getFullYear()),
-          enrolledStudentsEmail: formData.enrolledStudentsEmail || [],
-          timestamp: new Date().toISOString()
-        };
-
-        if (modalData?.id) {
-          // Update existing subject
-          const subjectRef = doc(db, `schools/${SCHOOL_ID}/courses`, modalData.id);
-          await updateDoc(subjectRef, subjectData);
-          
-          // Update local state
-          setCourses(prevCourses =>
-            prevCourses.map(course =>
-              course.id === modalData.id ? { ...subjectData, id: modalData.id } : course
-            )
-          );
+      } else {
+        // Add new item
+        const collectionRef = collection(db, `schools/${SCHOOL_ID}/${modalType === 'teacher' ? 'teacher' : 'courses'}`);
+        const docRef = await addDoc(collectionRef, sanitizedData);
+        
+        // Update local state
+        if (modalType === 'teacher') {
+          setTeachers(prev => [...prev, { id: docRef.id, ...sanitizedData }]);
         } else {
-          // Add new subject
-          const subjectsRef = collection(db, `schools/${SCHOOL_ID}/courses`);
-          const docRef = await addDoc(subjectsRef, subjectData);
-          
-          setCourses(prevCourses => [
-            ...prevCourses,
-            { id: docRef.id, ...subjectData }
-          ]);
+          setCourses(prev => [...prev, { id: docRef.id, ...sanitizedData }]);
         }
-      } else if (modalType === 'student') {
-        const studentData = {
-          userId: generateStaticId(), // Use static ID generator
-          email: formData.email.trim(),
-          firstName: formData.firstName.trim(),
-          lastName: formData.lastName.trim(),
-          phone: formData.phone.trim(),
-          formattedDate: new Date().toLocaleDateString(),
-          timestamp: new Date().toISOString()
-        };
-
-        if (editingId) {
-          const studentRef = doc(db, `schools/7kJvkewDYT1hTRKieGcQ/applications`, editingId);
-          await updateDoc(studentRef, studentData);
-          
-          setStudents(prevStudents =>
-            prevStudents.map(student =>
-              student.id === editingId ? { id: editingId, ...studentData } : student
-            )
-          );
-        } else {
-          const applicationsRef = collection(db, `schools/7kJvkewDYT1hTRKieGcQ/applications`);
-          const docRef = await addDoc(applicationsRef, studentData);
-          
-          setStudents(prevStudents => [
-            ...prevStudents,
-            { id: docRef.id, ...studentData }
-          ]);
-        }
-
-        setShowModal(false);
-        alert(editingId ? 'Student updated successfully' : 'Student added successfully');
       }
 
       setShowModal(false);
+      setModalData(null);
+      setEditingId(null);
       setHasChanges(false);
-      alert(`${modalType.charAt(0).toUpperCase() + modalType.slice(1)} ${modalData ? 'updated' : 'added'} successfully`);
     } catch (error) {
-      console.error(`Error saving ${modalType}:`, error);
-      alert(`Error saving ${modalType}. Please try again.`);
+      console.error('Error saving data:', error);
     }
   };
 
@@ -885,30 +802,19 @@ const CourseModal = ({
   onSave, 
   modalType, 
   teachers, 
-  students, 
+  students,
   onFormChange,
   hasChanges
 }) => {
-  const initialTeacherData = {
-    teacherId: generateStaticId(),
-    teacherFName: '',
-    teacherLName: '',
-    teacherMName: '',
-    teacherEmail: '',
-    specialization: '',
-    yearsTeaching: '',
-    timestamp: new Date().toISOString()
-  };
-
   const initialSubjectData = {
-    courseId: generateStaticId(),
+    courseId: generateStaticId().toString(),
     courseName: '',
     edpCode: '',
     courseDescription: '',
     teacherEmail: '',
     teacherName: '',
-    year: new Date().getFullYear(),
-    enrolledStudentsEmail: [],
+    year: new Date().getFullYear().toString(),
+    enrolledStudentsEmail: [], // Can contain multiple students
     timestamp: new Date().toISOString()
   };
 
@@ -930,26 +836,29 @@ const CourseModal = ({
       const selectedTeacher = teachers.find(teacher => teacher.teacherEmail === value);
       setFormData(prev => ({
         ...prev,
-        teacherEmail: value,
+        teacherEmail: value.toString(),
         teacherName: selectedTeacher ? 
-          `${selectedTeacher.teacherFName} ${selectedTeacher.teacherLName}` : ''
+          `${selectedTeacher.teacherFName} ${selectedTeacher.teacherLName}`.toString() : ''
       }));
     } else {
       setFormData(prev => ({
         ...prev,
-        [name]: value
+        [name]: value.toString()
       }));
     }
   };
 
   const handleStudentSelection = (e) => {
-    // Get all selected options
-    const selectedEmails = Array.from(e.target.selectedOptions).map(option => option.value);
+    const selectedEmails = Array.from(e.target.selectedOptions).map(option => 
+      option.value.toString()
+    );
     
-    // Add new selections to existing enrolledStudentsEmail array
     setFormData(prev => ({
       ...prev,
-      enrolledStudentsEmail: [...new Set([...(prev.enrolledStudentsEmail || []), ...selectedEmails])]
+      enrolledStudentsEmail: [...new Set([
+        ...(prev.enrolledStudentsEmail || []),
+        ...selectedEmails
+      ])]
     }));
   };
 
@@ -973,21 +882,6 @@ const CourseModal = ({
       if (!formData.edpCode?.trim()) newErrors.edpCode = 'EDP code is required';
       if (!formData.courseDescription?.trim()) newErrors.courseDescription = 'Description is required';
       if (!formData.teacherEmail?.trim()) newErrors.teacherEmail = 'Teacher email is required';
-      
-      // Validate enrolled students
-      if (formData.enrolledStudentsEmail?.length > 1) {
-        newErrors.enrolledStudentsEmail = 'Only one student can be enrolled';
-      }
-
-      // Check for duplicate email
-      const existingCourse = courses.find(course => 
-        course.id !== formData.id && // Exclude current course when editing
-        course.enrolledStudentsEmail?.includes(formData.enrolledStudentsEmail?.[0])
-      );
-      
-      if (existingCourse) {
-        newErrors.enrolledStudentsEmail = 'This student is already enrolled in another course';
-      }
     }
 
     return newErrors;
@@ -1124,7 +1018,6 @@ const CourseModal = ({
                     value={formData.courseName}
                     onChange={handleChange}
                     className={errors.courseName ? 'error' : ''}
-                    placeholder="Enter course name"
                   />
                   {errors.courseName && <span className="error">{errors.courseName}</span>}
                 </div>
@@ -1137,7 +1030,6 @@ const CourseModal = ({
                     value={formData.edpCode}
                     onChange={handleChange}
                     className={errors.edpCode ? 'error' : ''}
-                    placeholder="Enter EDP code"
                   />
                   {errors.edpCode && <span className="error">{errors.edpCode}</span>}
                 </div>
@@ -1150,8 +1042,6 @@ const CourseModal = ({
                   value={formData.courseDescription}
                   onChange={handleChange}
                   className={errors.courseDescription ? 'error' : ''}
-                  rows="3"
-                  placeholder="Enter course description"
                 />
                 {errors.courseDescription && <span className="error">{errors.courseDescription}</span>}
               </div>
@@ -1287,6 +1177,36 @@ const CourseModal = ({
       </div>
     </div>
   );
+};
+
+// Add this function to ensure data types
+const sanitizeFormData = (data, type) => {
+  if (type === 'teacher') {
+    return {
+      teacherId: data.teacherId?.toString() || '',
+      teacherFName: data.teacherFName?.toString() || '',
+      teacherLName: data.teacherLName?.toString() || '',
+      teacherMName: data.teacherMName?.toString() || '',
+      teacherEmail: data.teacherEmail?.toString() || '',
+      specialization: data.specialization?.toString() || '',
+      yearsTeaching: data.yearsTeaching?.toString() || '',
+      timestamp: data.timestamp?.toString() || new Date().toISOString()
+    };
+  } else {
+    return {
+      courseId: data.courseId?.toString() || '',
+      courseName: data.courseName?.toString() || '',
+      edpCode: data.edpCode?.toString() || '',
+      courseDescription: data.courseDescription?.toString() || '',
+      teacherEmail: data.teacherEmail?.toString() || '',
+      teacherName: data.teacherName?.toString() || '',
+      year: data.year?.toString() || new Date().getFullYear().toString(),
+      enrolledStudentsEmail: Array.isArray(data.enrolledStudentsEmail) 
+        ? data.enrolledStudentsEmail.map(email => email?.toString() || '')
+        : [],
+      timestamp: data.timestamp?.toString() || new Date().toISOString()
+    };
+  }
 };
 
 export default HubAdmin_Classroom;
