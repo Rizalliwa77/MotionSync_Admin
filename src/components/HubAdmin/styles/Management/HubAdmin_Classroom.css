@@ -2023,3 +2023,302 @@
   color: #6b7280;
   text-align: right;
 }
+
+/* Dropdown Styles */
+.dropdown-label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.custom-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown-select {
+  width: 100%;
+  padding: 0.75rem;
+  padding-right: 2.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #1f2937;
+  background-color: white;
+  appearance: none;
+  cursor: pointer;
+}
+
+.dropdown-select.multiple {
+  min-height: 120px;
+  max-height: 200px;
+}
+
+.dropdown-arrow {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #6b7280;
+  font-size: 0.8rem;
+}
+
+.dropdown-select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.dropdown-select option {
+  padding: 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.dropdown-select option:last-child {
+  border-bottom: none;
+}
+
+/* Remove Selected Button */
+.remove-selected-btn {
+  margin-top: 0.75rem;
+  padding: 0.5rem 1rem;
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-selected-btn:hover {
+  background-color: #fecaca;
+}
+
+/* Helper Text */
+.helper-text {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+}
+
+/* Form Section */
+.form-section {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+/* Error Styles */
+.dropdown-select.error {
+  border-color: #dc2626;
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Multiple Select Specific Styles */
+.dropdown-select[multiple] {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.dropdown-select[multiple]::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dropdown-select[multiple]::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.dropdown-select[multiple]::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 3px;
+}
+
+.dropdown-select[multiple]::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+
+.dropdown-select[multiple] option {
+  padding: 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.dropdown-select[multiple] option:checked {
+  background-color: #e5e7eb;
+  color: #1f2937;
+}
+
+/* Student Enrollment Styles */
+.student-enrollment {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.enrollment-group {
+  margin-bottom: 2rem;
+}
+
+.enrollment-group:last-child {
+  margin-bottom: 0;
+}
+
+.enrollment-label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+/* Enrolled Students List */
+.enrolled-students {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  min-height: 60px;
+}
+
+.enrolled-student-item {
+  background-color: #eef2ff;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  margin: 0.25rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.student-name {
+  font-size: 0.95rem;
+  color: #1f2937;
+}
+
+.student-email {
+  color: #6b7280;
+  margin-left: 0.5rem;
+}
+
+/* Available Students Dropdown */
+.available-students {
+  position: relative;
+}
+
+.students-dropdown {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: white;
+  min-height: 150px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.student-option {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.student-option:hover {
+  background-color: #f3f4f6;
+}
+
+.student-option:checked {
+  background-color: #eef2ff;
+  color: #4f46e5;
+}
+
+/* Remove Students Button */
+.remove-students-btn {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.remove-students-btn:hover {
+  background-color: #fecaca;
+}
+
+/* Helper Text */
+.helper-text {
+  display: block;
+  margin-top: 0.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-style: italic;
+  text-align: center;
+}
+
+/* Scrollbar Styles */
+.students-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.students-dropdown::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.students-dropdown::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 3px;
+}
+
+.students-dropdown::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+
+/* Multiple Selection Styles */
+.students-dropdown option {
+  padding: 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.students-dropdown option:last-child {
+  border-bottom: none;
+}
+
+.students-dropdown option:checked {
+  background-color: #eef2ff;
+  color: #4f46e5;
+}

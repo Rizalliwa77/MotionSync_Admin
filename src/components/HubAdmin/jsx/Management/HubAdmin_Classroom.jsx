@@ -36,6 +36,8 @@ const HubAdmin_Classroom = () => {
   let currentStudentId = 110;
   const [showDocumentModal, setShowDocumentModal] = useState(false);
   const [currentDocument, setCurrentDocument] = useState(null);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [originalData, setOriginalData] = useState(null);
 
   // Fetch courses from Firebase
   useEffect(() => {
@@ -129,10 +131,18 @@ const HubAdmin_Classroom = () => {
   };
 
   const handleEdit = (item, type) => {
-    setModalData(item);
+    setModalData({...item}); // Create a copy of the item
     setModalType(type);
     setShowModal(true);
     setEditingId(item.id);
+    setOriginalData(item); // Store the original item directly, not stringified
+    setHasChanges(false);
+  };
+
+  const handleFormChange = (formData) => {
+    // Compare new data with original data
+    const isChanged = JSON.stringify(formData) !== JSON.stringify(originalData);
+    setHasChanges(isChanged);
   };
 
   const handleDelete = async (item, type, setState) => {
@@ -175,47 +185,80 @@ const HubAdmin_Classroom = () => {
   };
 
   const handleSave = async (formData) => {
+    if (!hasChanges) {
+      setShowModal(false);
+      return;
+    }
+
     try {
       if (modalType === 'teacher') {
         const teacherData = {
-          teacherId: generateStaticId(),
-          teacherFName: String(formData.firstName || '').trim(),
-          teacherMName: String(formData.middleInitial || '').trim(),
-          teacherLName: String(formData.lastName || '').trim(),
-          teacherEmail: String(formData.email || '').trim(),
-          teacherGender: String(formData.gender || ''),
+          teacherId: formData.teacherId || generateStaticId(),
+          teacherFName: String(formData.teacherFName || '').trim(),
+          teacherMName: String(formData.teacherMName || '').trim(),
+          teacherLName: String(formData.teacherLName || '').trim(),
+          teacherEmail: String(formData.teacherEmail || '').trim(),
           specialization: String(formData.specialization || '').trim(),
-          yearsTeaching: String(formData.yearsOfTeaching || ''),
+          yearsTeaching: Number(formData.yearsTeaching || 0),
+          timestamp: new Date().toISOString()
         };
 
-        const teachersRef = collection(db, `schools/7kJvkewDYT1hTRKieGcQ/teacher`);
-        const docRef = await addDoc(teachersRef, teacherData);
-        
-        setTeachers(prevTeachers => [
-          ...prevTeachers,
-          { id: docRef.id, ...teacherData }
-        ]);
+        if (modalData?.id) {
+          // Update existing teacher
+          const teacherRef = doc(db, `schools/${SCHOOL_ID}/teacher`, modalData.id);
+          await updateDoc(teacherRef, teacherData);
+          
+          // Update local state
+          setTeachers(prevTeachers =>
+            prevTeachers.map(teacher =>
+              teacher.id === modalData.id ? { ...teacherData, id: modalData.id } : teacher
+            )
+          );
+        } else {
+          // Add new teacher
+          const teachersRef = collection(db, `schools/${SCHOOL_ID}/teacher`);
+          const docRef = await addDoc(teachersRef, teacherData);
+          
+          setTeachers(prevTeachers => [
+            ...prevTeachers,
+            { id: docRef.id, ...teacherData }
+          ]);
+        }
 
       } else if (modalType === 'subject') {
         const subjectData = {
-          courseId: generateStaticId(),
+          courseId: formData.courseId || generateStaticId(),
           courseName: String(formData.courseName || '').trim(),
           edpCode: String(formData.edpCode || '').trim(),
           courseDescription: String(formData.courseDescription || '').trim(),
-          teacherId: String(formData.teacherId || ''),
           teacherEmail: String(formData.teacherEmail || '').trim(),
           teacherName: String(formData.teacherName || ''),
-          year: String(formData.year || ''),
-          enrolledStudentsEmail: formData.enrolledStudentsEmail || []
+          year: Number(formData.year || new Date().getFullYear()),
+          enrolledStudentsEmail: formData.enrolledStudentsEmail || [],
+          timestamp: new Date().toISOString()
         };
 
-        const subjectsRef = collection(db, `schools/${SCHOOL_ID}/courses`);
-        const docRef = await addDoc(subjectsRef, subjectData);
-        
-        setCourses(prevCourses => [
-          ...prevCourses,
-          { id: docRef.id, ...subjectData }
-        ]);
+        if (modalData?.id) {
+          // Update existing subject
+          const subjectRef = doc(db, `schools/${SCHOOL_ID}/courses`, modalData.id);
+          await updateDoc(subjectRef, subjectData);
+          
+          // Update local state
+          setCourses(prevCourses =>
+            prevCourses.map(course =>
+              course.id === modalData.id ? { ...subjectData, id: modalData.id } : course
+            )
+          );
+        } else {
+          // Add new subject
+          const subjectsRef = collection(db, `schools/${SCHOOL_ID}/courses`);
+          const docRef = await addDoc(subjectsRef, subjectData);
+          
+          setCourses(prevCourses => [
+            ...prevCourses,
+            { id: docRef.id, ...subjectData }
+          ]);
+        }
       } else if (modalType === 'student') {
         const studentData = {
           userId: generateStaticId(), // Use static ID generator
@@ -251,7 +294,8 @@ const HubAdmin_Classroom = () => {
       }
 
       setShowModal(false);
-      alert(`${modalType.charAt(0).toUpperCase() + modalType.slice(1)} added successfully`);
+      setHasChanges(false);
+      alert(`${modalType.charAt(0).toUpperCase() + modalType.slice(1)} ${modalData ? 'updated' : 'added'} successfully`);
     } catch (error) {
       console.error(`Error saving ${modalType}:`, error);
       alert(`Error saving ${modalType}. Please try again.`);
@@ -792,6 +836,8 @@ const HubAdmin_Classroom = () => {
           modalType={modalType}
           teachers={teachers}
           students={students}
+          onFormChange={handleFormChange}
+          hasChanges={hasChanges}
         />
       )}
 
@@ -833,7 +879,16 @@ const HubAdmin_Classroom = () => {
   );
 };
 
-const CourseModal = ({ data, onClose, onSave, modalType, teachers, students }) => {
+const CourseModal = ({ 
+  data, 
+  onClose, 
+  onSave, 
+  modalType, 
+  teachers, 
+  students, 
+  onFormChange,
+  hasChanges
+}) => {
   const initialTeacherData = {
     teacherId: generateStaticId(),
     teacherFName: '',
@@ -864,6 +919,11 @@ const CourseModal = ({ data, onClose, onSave, modalType, teachers, students }) =
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [errors, setErrors] = useState({});
 
+  // Add useEffect to track changes
+  useEffect(() => {
+    onFormChange(formData);
+  }, [formData, onFormChange]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'teacherEmail') {
@@ -883,14 +943,13 @@ const CourseModal = ({ data, onClose, onSave, modalType, teachers, students }) =
   };
 
   const handleStudentSelection = (e) => {
+    // Get all selected options
     const selectedEmails = Array.from(e.target.selectedOptions).map(option => option.value);
     
-    // Only take the first selected email
-    const email = selectedEmails[0];
-    
+    // Add new selections to existing enrolledStudentsEmail array
     setFormData(prev => ({
       ...prev,
-      enrolledStudentsEmail: email ? [email] : []
+      enrolledStudentsEmail: [...new Set([...(prev.enrolledStudentsEmail || []), ...selectedEmails])]
     }));
   };
 
@@ -943,41 +1002,24 @@ const CourseModal = ({ data, onClose, onSave, modalType, teachers, students }) =
       return;
     }
 
-    try {
-      if (modalType === 'teacher') {
-        const teacherData = {
-          ...formData,
-          yearsTeaching: parseInt(formData.yearsTeaching)
-        };
-        
-        if (data?.id) {
-          const teacherRef = doc(db, `schools/${SCHOOL_ID}/teacher`, data.id);
-          await updateDoc(teacherRef, teacherData);
-        } else {
-          const teachersRef = collection(db, `schools/${SCHOOL_ID}/teacher`);
-          await addDoc(teachersRef, teacherData);
-        }
-      } else {
-        const subjectData = {
-          ...formData,
-          year: parseInt(formData.year)
-        };
-        
-        if (data?.id) {
-          const subjectRef = doc(db, `schools/${SCHOOL_ID}/courses`, data.id);
-          await updateDoc(subjectRef, subjectData);
-        } else {
-          const subjectsRef = collection(db, `schools/${SCHOOL_ID}/courses`);
-          await addDoc(subjectsRef, subjectData);
-        }
-      }
-      
-      onSave(formData);
-      onClose();
-    } catch (error) {
-      console.error('Error saving:', error);
-      alert('Error saving. Please try again.');
-    }
+    onSave(formData);
+  };
+
+  const handleTeacherSelection = (e) => {
+    const value = e.target.value;
+    // Allow deselecting teacher by selecting the empty option
+    setFormData(prev => ({
+      ...prev,
+      teacherEmail: value,
+      teacherName: value ? teachers.find(t => t.teacherEmail === value)?.teacherFName : ''
+    }));
+  };
+
+  const handleRemoveStudent = (emailToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      enrolledStudentsEmail: prev.enrolledStudentsEmail.filter(email => email !== emailToRemove)
+    }));
   };
 
   return (
@@ -1116,24 +1158,27 @@ const CourseModal = ({ data, onClose, onSave, modalType, teachers, students }) =
 
               <div className="form-row">
                 <div className="form-group">
-                  <label>Assign Teacher*</label>
-                  <select
-                    name="teacherEmail"
-                    value={formData.teacherEmail}
-                    onChange={handleChange}
-                    className={`form-select ${errors.teacherEmail ? 'error' : ''}`}
-                  >
-                    <option value="">Select a teacher</option>
-                    {teachers.map(teacher => (
-                      <option 
-                        key={teacher.id} 
-                        value={teacher.teacherEmail}
-                      >
-                        {teacher.teacherEmail}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.teacherEmail && <span className="error">{errors.teacherEmail}</span>}
+                  <label className="dropdown-label">Assign Teacher</label>
+                  <div className="custom-dropdown">
+                    <select
+                      name="teacherEmail"
+                      value={formData.teacherEmail || ''}
+                      onChange={handleTeacherSelection}
+                      className={`dropdown-select ${errors.teacherEmail ? 'error' : ''}`}
+                    >
+                      <option value="">Select a teacher</option>
+                      {teachers.map(teacher => (
+                        <option 
+                          key={teacher.id} 
+                          value={teacher.teacherEmail}
+                        >
+                          {`${teacher.teacherFName} ${teacher.teacherLName} (${teacher.teacherEmail})`}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="dropdown-arrow">▼</span>
+                  </div>
+                  {errors.teacherEmail && <span className="error-message">{errors.teacherEmail}</span>}
                 </div>
 
                 <div className="form-group">
@@ -1149,41 +1194,92 @@ const CourseModal = ({ data, onClose, onSave, modalType, teachers, students }) =
                 </div>
               </div>
 
-              <div className="form-group">
-                <label>Enrolled Student</label>
-                <select
-                  name="enrolledStudentsEmail"
-                  value={formData.enrolledStudentsEmail || []}
-                  onChange={handleStudentSelection}
-                  className={`form-select ${errors.enrolledStudentsEmail ? 'error' : ''}`}
-                >
-                  <option value="">Select a student</option>
-                  {students.map(student => (
-                    <option 
-                      key={student.id} 
-                      value={student.email}
+              <div className="form-section">
+                <div className="form-group">
+                  <label className="dropdown-label">
+                    Currently Enrolled Students ({formData.enrolledStudentsEmail?.length || 0})
+                  </label>
+                  <div className="custom-dropdown">
+                    <select 
+                      multiple 
+                      className="dropdown-select multiple"
+                      value={formData.enrolledStudentsEmail || []}
+                      onChange={(e) => {
+                        const selectedEmails = Array.from(e.target.selectedOptions).map(opt => opt.value);
+                        setFormData(prev => ({
+                          ...prev,
+                          enrolledStudentsEmail: selectedEmails
+                        }));
+                      }}
                     >
-                      {student.email}
-                    </option>
-                  ))}
-                </select>
-                {errors.enrolledStudentsEmail && (
-                  <span className="error">{errors.enrolledStudentsEmail}</span>
-                )}
-                {formData.enrolledStudentsEmail?.length > 0 && (
-                  <div className="selected-count">
-                    Selected student: {formData.enrolledStudentsEmail[0]}
+                      {formData.enrolledStudentsEmail?.map(email => {
+                        const student = students.find(s => s.email === email);
+                        return (
+                          <option key={email} value={email}>
+                            {student ? `${student.firstName} ${student.lastName} (${email})` : email}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
-                )}
+                  <button
+                    type="button"
+                    className="remove-selected-btn"
+                    onClick={() => {
+                      const select = document.querySelector('.dropdown-select.multiple');
+                      const selectedOptions = Array.from(select.selectedOptions);
+                      const emailsToRemove = selectedOptions.map(opt => opt.value);
+                      setFormData(prev => ({
+                        ...prev,
+                        enrolledStudentsEmail: prev.enrolledStudentsEmail.filter(
+                          email => !emailsToRemove.includes(email)
+                        )
+                      }));
+                    }}
+                  >
+                    Remove Selected Students
+                  </button>
+                </div>
+
+                {/* Add Students Section */}
+                <div className="form-group">
+                  <label className="dropdown-label">Add Students</label>
+                  <div className="custom-dropdown">
+                    <select
+                      multiple
+                      className="dropdown-select multiple"
+                      onChange={handleStudentSelection}
+                    >
+                      {students
+                        .filter(student => !formData.enrolledStudentsEmail?.includes(student.email))
+                        .map(student => (
+                          <option key={student.id} value={student.email}>
+                            {`${student.firstName} ${student.lastName} (${student.email})`}
+                          </option>
+                        ))
+                      }
+                    </select>
+                  </div>
+                  <span className="helper-text">Hold Ctrl/Cmd to select multiple students</span>
+                </div>
               </div>
             </>
           )}
 
           <div className="modal-actions">
-            <button type="button" className="secondary-button" onClick={onClose}>
+            <button 
+              className="secondary-button" 
+              onClick={onClose}
+              type="button"
+            >
               Cancel
             </button>
-            <button type="submit" className="primary-button">
+            <button 
+              className="primary-button" 
+              onClick={() => onSave(formData)}
+              disabled={!hasChanges}
+              type="button"
+            >
               {data ? 'Save Changes' : 'Add'}
             </button>
           </div>
